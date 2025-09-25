@@ -1,13 +1,36 @@
+import { useEffect, useRef } from "react";
+
 function App() {
+  const audioRef = useRef(null);
+  useEffect(() => {
+    // Try autoplay on mount
+    const tryPlay = async () => {
+      if (audioRef.current) {
+        try {
+          await audioRef.current.play();
+        } catch (err) {
+          console.log("Autoplay blocked by browser; waiting for user action.");
+        }
+      }
+    };
+    tryPlay();
+  }, []);
   return (
     <>
+      {/* Background music */}
+      <audio
+        ref={audioRef}
+        src="/audio/beautiful-in-white.mp3"
+        preload="auto"
+        loop
+        hidden
+      />
       {/* Video background (global) */}
       <video
         className="fixed inset-0 w-full h-dvh object-cover pointer-events-none z-0 motion-safe:block motion-reduce:hidden"
         autoPlay
         muted
         playsInline
-        loop
         preload="metadata"
         poster="/images/wedding-poster.jpg"
         aria-hidden="true"
@@ -67,6 +90,7 @@ function App() {
           </span>
           {/* Glassmorphism button */}
           <button
+            onClick={() => audioRef.current?.play()}
             className="
     px-6 py-2 rounded-xl relative
     font-semibold moul-regular
