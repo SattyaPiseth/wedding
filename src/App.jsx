@@ -1,15 +1,39 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useRef, useState, useEffect, useCallback } from "react";
 import VideoLayer from "./components/VideoLayer.jsx";
 import Overlay from "./components/Overlay.jsx";
 
-const STORY_VIDEOS = ["/videos/home.mp4"]; // extend as needed
-const BG_VIDEO = "/videos/background.mp4";
-const BG_POSTER = "/images/background.jpg";
+const STORY_VIDEOS = ["/videos/home.mp4"];
 const BGMUSIC = "/audio/beautiful-in-white.mp3";
+
+// Default + route backgrounds
+const DEFAULT_BG = {
+  src: "/videos/background.mp4",
+  poster: "/images/background.jpg",
+  loop: true,
+  muted: true,
+};
+
+const BG_BY_ROUTE = {
+  "/": {
+    src: "/videos/background.mp4",
+    poster: "/images/background.jpg",
+    loop: true,
+    muted: true,
+  },
+  "/home": {
+    src: "/videos/bg-homepage.mp4",
+    poster: "/images/home-bg.jpg",
+    loop: false,
+    muted: true,
+  },
+  // add more routes here ...
+};
 
 export default function App() {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
   const audioRef = useRef(null);
   const videoRef = useRef(null);
 
@@ -18,7 +42,23 @@ export default function App() {
   const [storyIndex, setStoryIndex] = useState(-1);
   const [unlocked, setUnlocked] = useState(false);
 
-  // 1) Prime audio once on user action
+  // route background + override
+  const routeBg = BG_BY_ROUTE[pathname] ?? DEFAULT_BG;
+  const [bgOverride, setBgOverride] = useState(null);
+  const effectiveBg = bgOverride ?? routeBg;
+
+  const setBackground = useCallback(
+    (next) => setBgOverride((prev) => ({ ...(prev ?? routeBg), ...next })),
+    [routeBg]
+  );
+  const resetBackground = useCallback(() => setBgOverride(null), []);
+
+  // clear override on route change
+  useEffect(() => {
+    setBgOverride(null);
+  }, [pathname]);
+
+  // prime audio on user gesture
   const primeAudio = useCallback(async () => {
     const a = audioRef.current;
     if (!a) return;
@@ -38,28 +78,29 @@ export default function App() {
     }
   }, []);
 
-  // 2) Public API to start the story
+  // public API to start the story
   const startStory = useCallback(async () => {
     await primeAudio();
     setStoryIndex(0);
     setMode("story");
   }, [primeAudio]);
 
-  // 3) Centralized effect that reacts to (mode, storyIndex)
+  // central video controller
   useEffect(() => {
     const v = videoRef.current;
     const a = audioRef.current;
     if (!v) return;
 
     const applyAndPlay = async (src, { loop, muted }) => {
-      v.loop = loop;
-      v.muted = muted;
-      if (muted) v.setAttribute("muted", "");
+      v.loop = !!loop;
+      v.muted = !!muted;
+      if (v.muted) v.setAttribute("muted", "");
       else v.removeAttribute("muted");
 
-      if (v.src !== window.location.origin + src) {
-        v.src = src;
-        v.load(); // reset pipeline deterministically
+      const absolute = window.location.origin + src;
+      if (v.src !== absolute) {
+        v.src = src;   // relative OK
+        v.load();      // reset pipeline deterministically
       }
 
       try {
@@ -75,18 +116,18 @@ export default function App() {
     if (mode === "story") {
       const src = STORY_VIDEOS[storyIndex] ?? STORY_VIDEOS[0];
       applyAndPlay(src, { loop: false, muted: false });
-      // bring in bg music only if you want it *during* story:
-      // (often stories want clean SFX/music track only)
       if (unlocked) a?.play().catch(() => {});
     } else {
-      // background
-      applyAndPlay(BG_VIDEO, { loop: false, muted: true }); // play-once background
-      // keep ambient music going if user has unlocked
+      // single source of truth: effectiveBg
+      applyAndPlay(effectiveBg.src, {
+        loop: effectiveBg.loop,
+        muted: effectiveBg.muted,
+      });
       if (unlocked) a?.play().catch(() => {});
     }
-  }, [mode, storyIndex, unlocked]);
+  }, [mode, storyIndex, unlocked, effectiveBg]);
 
-  // 4) End-of-video only matters in story mode
+  // end-of-video only in story mode
   const handleEnded = useCallback(() => {
     if (mode !== "story") return;
     const next = storyIndex + 1;
@@ -94,10 +135,10 @@ export default function App() {
       setStoryIndex(next);
     } else {
       setStoryIndex(-1);
-      setMode("background"); // returns to background; background won’t loop
+      setMode("background");
       navigate("/home");
     }
-  }, [mode, storyIndex]);
+  }, [mode, storyIndex, navigate]);
 
   return (
     <>
@@ -107,17 +148,15 @@ export default function App() {
       {/* Background / Story video */}
       <VideoLayer
         videoRef={videoRef}
-        poster={BG_POSTER}
-        // Bind onEnded only during story mode
+        poster={effectiveBg.poster}
         onEnded={mode === "story" ? handleEnded : undefined}
-        // Keep the element declarative; no loop prop here (we set it in effect)
       />
 
       <Overlay />
 
-      {/* Pass a simple API to children */}
+      {/* Children get the small API */}
       <main className="relative z-20">
-        <Outlet context={{ mode, startStory }} />
+        <Outlet context={{ mode, startStory, setBackground, resetBackground }} />
       </main>
     </>
   );
