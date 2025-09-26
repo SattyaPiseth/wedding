@@ -13,12 +13,12 @@ function App() {
 
   const storyVideos = ["/videos/home.mp4"];
 
-  useEffect(() => {
-    // Try autoplay ambient music; many phones will block until a tap.
-    audioRef.current?.play().then(() => {
-      setUnlocked(true);
-    }).catch(() => {});
-  }, []);
+  // useEffect(() => {
+  //   // Try autoplay ambient music; many phones will block until a tap.
+  //   audioRef.current?.play().then(() => {
+  //     setUnlocked(true);
+  //   }).catch(() => {});
+  // }, []);
 
   const handleStartStory = async () => {
     setIsStoryPlaying(true);
