@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { Outlet } from "react-router-dom";
+import { useRef, useState } from "react";
 import VideoLayer from "./components/VideoLayer.jsx";
 import Overlay from "./components/Overlay.jsx";
-import Hero from "./components/Hero.jsx";
 
-function App() {
+export default function App() {
   const audioRef = useRef(null);
   const videoRef = useRef(null);
 
@@ -13,7 +13,6 @@ function App() {
 
   const storyVideos = ["/videos/home.mp4"];
 
-  // --- NEW: prime audio during a user gesture so later plays are allowed ---
   const primeAudio = async () => {
     const a = audioRef.current;
     if (!a) return;
@@ -22,15 +21,13 @@ function App() {
       const prevVol = a.volume;
       a.muted = true;
       a.volume = 0;
-      await a.play();     // unlock
-      await a.pause();    // stop immediately
-      a.currentTime = 0;  // rewind
+      await a.play();
+      await a.pause();
+      a.currentTime = 0;
       a.muted = prevMuted;
       a.volume = prevVol;
       setUnlocked(true);
-    } catch {
-      // ignore; a second tap will usually unlock if needed
-    }
+    } catch {}
   };
 
   const handleStartStory = async () => {
@@ -40,24 +37,21 @@ function App() {
     const v = videoRef.current;
     const a = audioRef.current;
 
-    // Prime audio + set up video source before trying to play both
     await primeAudio();
 
     if (v) {
       v.src = storyVideos[0];
       v.loop = false;
-      v.muted = false;                 // try unmuted
+      v.muted = false;
       v.removeAttribute("muted");
     }
 
-    // START BOTH together on the same user gesture
     await Promise.all([
       (async () => {
         if (!v) return;
         try {
           await v.play();
         } catch {
-          // fallback: some browsers require muted video to start
           v.muted = true;
           v.setAttribute("muted", "");
           await v.play().catch(() => {});
@@ -69,20 +63,14 @@ function App() {
           a.muted = false;
           await a.play();
         } catch {
-          // fallback prime: start muted, unmute next tick
           try {
             a.muted = true;
             await a.play();
-            setTimeout(() => { a.muted = false; }, 0);
-          } catch {
-            // still blocked; another user tap will allow it
-          }
+            setTimeout(() => (a.muted = false), 0);
+          } catch {}
         }
       })(),
     ]);
-
-    // IMPORTANT: remove this old line so music doesn't pause at start
-    // audioRef.current?.pause();  // <-- DELETE
   };
 
   const handleVideoEnded = async () => {
@@ -99,7 +87,6 @@ function App() {
         await videoRef.current.play().catch(() => {});
       }
     } else {
-      // Back to ambient loop (keep audio playing)
       if (videoRef.current) {
         videoRef.current.src = "/videos/background.mp4";
         videoRef.current.loop = true;
@@ -107,13 +94,9 @@ function App() {
         videoRef.current.setAttribute("muted", "");
         await videoRef.current.play().catch(() => {});
       }
-      // If you want music to CONTINUE, do nothing here.
-      // If you want music to STOP after story, uncomment the next line:
-      // audioRef.current?.pause();
 
-      // Optional: if audio was still locked somehow, try again:
       if (!audioRef.current?.paused && unlocked) {
-        // already playing; no-op
+        // already playing
       } else if (unlocked) {
         audioRef.current?.play().catch(() => {});
       }
@@ -125,7 +108,7 @@ function App() {
 
   return (
     <>
-      {/* Ambient music */}
+      {/* Ambient music (persistent across routes) */}
       <audio
         ref={audioRef}
         src="/audio/beautiful-in-white.mp3"
@@ -134,23 +117,18 @@ function App() {
         hidden
       />
 
-      {/* Background video layer */}
+      {/* Background video (persistent) */}
       <VideoLayer
         videoRef={videoRef}
         isStoryPlaying={isStoryPlaying}
         onEnded={handleVideoEnded}
       />
 
-      {/* Overlay tint */}
+      {/* Overlay (persistent) */}
       <Overlay />
 
-      {/* Foreground hero/content */}
-      <Hero
-        isStoryPlaying={isStoryPlaying}
-        onStart={handleStartStory}
-      />
+      {/* Pages render here. Share layout state via Outlet context */}
+      <Outlet context={{ isStoryPlaying, onStart: handleStartStory }} />
     </>
   );
 }
-
-export default App;
