@@ -49,7 +49,6 @@ export default function Hero({ isStoryPlaying, onStart }) {
             >
               សូមគោរពអញ្ជើញ
             </span>
-
             <span
               className="
                 moul-regular text-center
@@ -59,7 +58,6 @@ export default function Hero({ isStoryPlaying, onStart }) {
             >
               លោក ពិសិដ្ឋ សត្យា
             </span>
-
             <button
               onClick={onStart}
               className="
@@ -70,7 +68,7 @@ export default function Hero({ isStoryPlaying, onStart }) {
                 focus:outline-none focus:ring-2 focus:ring-[var(--gold)]/40
               "
             >
-              ចូលរួម
+              ចូលរួមកម្មវិធី
             </button>
           </>
         )}
