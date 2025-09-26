@@ -11,7 +11,7 @@ const DEFAULT_BG = {
   src: "/videos/background.mp4",
   poster: "/images/background.jpg",
   loop: true,
-  muted: true,
+  // muted: true,
 };
 
 const BG_BY_ROUTE = {
@@ -19,13 +19,13 @@ const BG_BY_ROUTE = {
     src: "/videos/background.mp4",
     poster: "/images/background.jpg",
     loop: true,
-    muted: true,
+    // muted: true,
   },
   "/home": {
     src: "/videos/bg-homepage.mp4",
     poster: "/images/home-bg.jpg",
     loop: false,
-    muted: true,
+    // muted: true,
   },
   // add more routes here ...
 };
@@ -81,7 +81,9 @@ export default function App() {
   // public API to start the story
   const startStory = useCallback(async () => {
     await primeAudio();
-    audioRef.current?.pause();
+    // audioRef.current?.pause();
+    // MP3 is the only soundtrack
+    audioRef.current?.play().catch(() => {});
     setStoryIndex(0);
     setMode("story");
   }, [primeAudio]);
@@ -92,11 +94,10 @@ export default function App() {
     const a = audioRef.current;
     if (!v) return;
 
-    const applyAndPlay = async (src, { loop, muted }) => {
+    const applyAndPlay = async (src, { loop }) => {
       v.loop = !!loop;
-      v.muted = !!muted;
-      if (v.muted) v.setAttribute("muted", "");
-      else v.removeAttribute("muted");
+      v.muted = true;
+      v.setAttribute("muted", ""); // always muted
 
       const absolute = window.location.origin + src;
       if (v.src !== absolute) {
@@ -107,32 +108,20 @@ export default function App() {
       try {
         await v.play();
       } catch {
-        // Only fallback-mute if clip was supposed to be muted
-        if (muted) {
-          v.muted = true;
-          v.setAttribute("muted", "");
-          await v.play().catch(() => {});
-        }
+        // Already muted; one safe retry is enough
+        await v.play().catch(() => {});
       }
     };
 
     if (mode === "story") {
       const src = STORY_VIDEOS[storyIndex] ?? STORY_VIDEOS[0];
-      applyAndPlay(src, { loop: false, muted: false });
-      // Keep ambient music OFF during story (video provides audio)
-      a?.pause();
+      // Story video stays muted; MP3 is the soundtrack
+      applyAndPlay(src, { loop: false });
+      if (unlocked) a?.play().catch(() => {}); // play song
     } else {
       // Background
-      applyAndPlay(effectiveBg.src, {
-        loop: effectiveBg.loop,
-        muted: effectiveBg.muted,
-      });
-
-      // Only play ambient music if bg video is muted; otherwise pause it
-      if (unlocked) {
-        if (effectiveBg.muted) a?.play().catch(() => {});
-        else a?.pause();
-      }
+      applyAndPlay(effectiveBg.src, { loop: effectiveBg.loop });
+      if (unlocked) a?.play().catch(() => {}); // always play song
     }
   }, [mode, storyIndex, unlocked, effectiveBg]);
 
