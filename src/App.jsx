@@ -6,32 +6,49 @@ function App() {
 
   const [isStoryPlaying, setIsStoryPlaying] = useState(false);
   const [storyIndex, setStoryIndex] = useState(-1);
+  const [unlocked, setUnlocked] = useState(false); // media unlocked by user gesture
 
   // List your story clips
-  const storyVideos = [
-    "/videos/home.mp4",
-  ];
+  const storyVideos = ["/videos/home.mp4"];
 
   useEffect(() => {
-    // Try autoplay background music
-    audioRef.current?.play().catch(() => {});
+    // Try autoplay background music (will be blocked on many phones until tap)
+    audioRef.current?.play().then(() => {
+      setUnlocked(true);
+    }).catch(() => {
+      // silently fail; we’ll start it on first tap if needed
+    });
   }, []);
 
   const handleStartStory = async () => {
     setIsStoryPlaying(true);
-    setStoryIndex(0); // start with story-01
+    setStoryIndex(0); // ✅ start at first story index
+
+    // Ensure background video is in a known state
     if (videoRef.current) {
+      // Switch to story source with sound
       videoRef.current.src = storyVideos[0];
       videoRef.current.loop = false;
+
+      // iOS/Android policies: unmuted play must be in a user gesture
       videoRef.current.muted = false;
+      videoRef.current.removeAttribute("muted"); // ensure attribute removed too
+
       try {
-        await videoRef.current.play();
+        await videoRef.current.play(); // should work now due to tap
       } catch {
+        // As a last resort, play muted to show motion, but keep UX flowing
         videoRef.current.muted = true;
+        videoRef.current.setAttribute("muted", "");
         await videoRef.current.play().catch(() => {});
       }
     }
+
+    // Pause ambient music during story
     audioRef.current?.pause();
+
+    // If autoplay was blocked before, mark as unlocked now
+    if (!unlocked) setUnlocked(true);
   };
 
   const handleVideoEnded = async () => {
@@ -42,16 +59,23 @@ function App() {
       videoRef.current.loop = false;
       try {
         await videoRef.current.play();
-      } catch {}
+      } catch {
+        // keep going muted if needed
+        videoRef.current.muted = true;
+        videoRef.current.setAttribute("muted", "");
+        await videoRef.current.play().catch(() => {});
+      }
     } else {
       // all stories finished → back to ambient
       if (videoRef.current) {
         videoRef.current.src = "/videos/background.mp4";
         videoRef.current.loop = true;
-        videoRef.current.muted = true;
+        videoRef.current.muted = true;              // ✅ background must stay muted
+        videoRef.current.setAttribute("muted", ""); // ensure attribute present
         await videoRef.current.play().catch(() => {});
       }
-      audioRef.current?.play().catch(() => {});
+      // Resume music if we’re allowed
+      if (unlocked) audioRef.current?.play().catch(() => {});
       setIsStoryPlaying(false);
       setStoryIndex(-1);
     }
