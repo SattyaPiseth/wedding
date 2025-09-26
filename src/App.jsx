@@ -101,7 +101,7 @@ function App() {
           muted
           playsInline
           preload="metadata"
-          poster="/images/wedding-poster.jpg"
+          poster="/images/background.jpg"
           aria-hidden="true"
           src="/videos/background.mp4"
           loop={!isStoryPlaying}
