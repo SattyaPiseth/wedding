@@ -81,6 +81,7 @@ export default function App() {
   // public API to start the story
   const startStory = useCallback(async () => {
     await primeAudio();
+    audioRef.current?.pause();
     setStoryIndex(0);
     setMode("story");
   }, [primeAudio]);
@@ -99,31 +100,39 @@ export default function App() {
 
       const absolute = window.location.origin + src;
       if (v.src !== absolute) {
-        v.src = src;   // relative OK
-        v.load();      // reset pipeline deterministically
+        v.src = src; // relative OK
+        v.load(); // reset pipeline deterministically
       }
 
       try {
         await v.play();
       } catch {
-        // Autoplay fallback: force muted and retry
-        v.muted = true;
-        v.setAttribute("muted", "");
-        await v.play().catch(() => {});
+        // Only fallback-mute if clip was supposed to be muted
+        if (muted) {
+          v.muted = true;
+          v.setAttribute("muted", "");
+          await v.play().catch(() => {});
+        }
       }
     };
 
     if (mode === "story") {
       const src = STORY_VIDEOS[storyIndex] ?? STORY_VIDEOS[0];
       applyAndPlay(src, { loop: false, muted: false });
-      if (unlocked) a?.play().catch(() => {});
+      // Keep ambient music OFF during story (video provides audio)
+      a?.pause();
     } else {
-      // single source of truth: effectiveBg
+      // Background
       applyAndPlay(effectiveBg.src, {
         loop: effectiveBg.loop,
         muted: effectiveBg.muted,
       });
-      if (unlocked) a?.play().catch(() => {});
+
+      // Only play ambient music if bg video is muted; otherwise pause it
+      if (unlocked) {
+        if (effectiveBg.muted) a?.play().catch(() => {});
+        else a?.pause();
+      }
     }
   }, [mode, storyIndex, unlocked, effectiveBg]);
 
@@ -156,7 +165,9 @@ export default function App() {
 
       {/* Children get the small API */}
       <main className="relative z-20">
-        <Outlet context={{ mode, startStory, setBackground, resetBackground }} />
+        <Outlet
+          context={{ mode, startStory, setBackground, resetBackground }}
+        />
       </main>
     </>
   );

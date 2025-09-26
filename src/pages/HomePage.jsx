@@ -1,4 +1,7 @@
+import Heading from "../components/Heading";
 
 export const HomePage = () => {
-  return <div className="flex justify-center items-center h-dvh">HomePage</div>;
+  return <>
+  <Heading/>
+  </>;
 };

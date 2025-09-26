@@ -1,0 +1,50 @@
+export default function CoverSection({ isStoryPlaying = false, onStart }) {
+  return (
+    <main
+      className="
+        flex-1 flex flex-col items-center justify-center
+        text-[var(--gold)] tracking-wider
+        gap-3 ios:gap-4 android:gap-3
+        pb-[calc(env(safe-area-inset-bottom,0px)+16px)]
+      "
+    >
+      {!isStoryPlaying && (
+        <>
+          <span
+            className="
+              moul-regular text-center
+              text-[clamp(1.15rem,4vw,1.75rem)]
+              animate-[fade-up_700ms_ease-out_both] [animation-delay:120ms]
+            "
+          >
+            សូមគោរពអញ្ជើញ
+          </span>
+
+          <span
+            className="
+              moul-regular text-center
+              text-[clamp(1.05rem,3.2vw,1.5rem)] py-5
+              animate-[fade-up_700ms_ease-out_both] [animation-delay:240ms]
+            "
+          >
+            លោក ពិសិដ្ឋ សត្យា
+          </span>
+
+          <button
+            onClick={onStart}
+            className="
+              px-6 py-2 ios:px-7 ios:py-3 rounded-xl font-semibold moul-regular
+              text-[var(--gold)] bg-white/5 backdrop-blur-sm text-sm
+              border border-[var(--gold)]/60 shadow-md shadow-black/20
+              hover:bg-white/10 transition duration-300
+              focus:outline-none focus:ring-2 focus:ring-[var(--gold)]/40
+              animate-[fade-up_700ms_ease-out_both]
+            "
+          >
+            ចូលរួមកម្មវិធី
+          </button>
+        </>
+      )}
+    </main>
+  );
+}
