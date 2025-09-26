@@ -1,20 +1,31 @@
-@import url('https://fonts.googleapis.com/css2?family=Moul&display=swap');
 @import "tailwindcss";
+/* Tokens (single source of truth) */
+:root {
+  --gold: #d2ab59;
+}
 
+/* Minimal base */
+html, body, #root { height: 100%; }
+
+/* A11y: motion */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+/* Khmer display font */
 .moul-regular {
   font-family: "Moul", serif;
   font-weight: 400;
   font-style: normal;
 }
 
-/* Pop the title in */
+/* Keyframes only (used via Tailwind's arbitrary animate-[...] class) */
 @keyframes pop {
   0%   { opacity: 0; transform: scale(0.96) }
   60%  { opacity: 1; transform: scale(1.02) }
   100% { opacity: 1; transform: scale(1) }
 }
 
-/* Fade up + slide a bit */
 @keyframes fade-up {
   0%   { opacity: 0; transform: translateY(8px) }
   100% { opacity: 1; transform: translateY(0) }

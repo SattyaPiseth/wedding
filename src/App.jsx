@@ -26,17 +26,19 @@ function App() {
         hidden
       />
       {/* Video background (global) */}
-      <video
-        className="fixed inset-0 w-full h-dvh object-cover pointer-events-none z-0 motion-safe:block motion-reduce:hidden"
-        autoPlay
-        muted
-        playsInline
-        preload="metadata"
-        poster="/images/wedding-poster.jpg"
-        aria-hidden="true"
-      >
-        <source src="./videos/background.mp4" type="video/mp4" />
-      </video>
+      <div className="fixed inset-0 w-full h-dvh z-0 pointer-events-none">
+        <video
+          className="absolute inset-0 w-full h-full object-cover motion-safe:block motion-reduce:hidden"
+          autoPlay
+          muted
+          playsInline
+          preload="metadata"
+          poster="/images/wedding-poster.jpg"
+          aria-hidden="true"
+        >
+          <source src="/videos/background.mp4" type="video/mp4" />
+        </video>
+      </div>
 
       {/* Contrast overlay */}
       <div
@@ -45,12 +47,11 @@ function App() {
       />
 
       {/* App shell */}
-      <div className="relative z-10 w-full mx-auto min-w-[320px] max-w-[440px] min-h-[568px] max-h-[956px] h-dvh flex flex-col">
+      <div className="relative z-10 w-full mx-auto min-w-[320px] max-w-[440px] h-[clamp(568px,100dvh,956px)] flex flex-col">
         {/* Top bar (dynamic offset) */}
         <header
           className="
-          p-4 flex items-center justify-center text-[#d2ab59] tracking-wide
-          pt-[calc(env(safe-area-inset-top)+clamp(10svh,15dvh,20lvh))]
+          p-4 flex items-center justify-center text-[var(--gold)] tracking-wide pt-[calc(env(safe-area-inset-top)+clamp(10svh,15dvh,20lvh))]
         "
         >
           <h1
@@ -66,7 +67,7 @@ function App() {
         </header>
 
         {/* Main content */}
-        <main className="flex-1 flex flex-col items-center justify-center gap-3 text-[#d2ab59] tracking-wider">
+        <main className="flex-1 flex flex-col items-center justify-center gap-3 text-[var(--gold)] tracking-wider">
           <span
             className="
               text-center font-semibold moul-regular text-[clamp(1.2rem,4vw,1.75rem)]
@@ -94,14 +95,14 @@ function App() {
             className="
     px-6 py-2 rounded-xl relative
     font-semibold moul-regular
-    text-[#d2ab59]
+    text-[var(--gold)]
     bg-white/5 backdrop-blur-sm
-    border border-[#d2ab59]/60
+    border border-[var(--gold)]/60
     shadow-md shadow-black/20
     transition duration-300
     hover:bg-white/10 hover:shadow-black/30
     active:scale-95
-    focus:outline-none focus:ring-2 focus:ring-[#d2ab59]/40
+    focus:outline-none focus:ring-2 focus:ring-[var(--gold)]/40
   "
           >
             ចូលរួមពិធី
