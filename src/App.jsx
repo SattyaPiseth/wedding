@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import VideoLayer from "./components/VideoLayer.jsx";
+import Overlay from "./components/Overlay.jsx";
+import Hero from "./components/Hero.jsx";
 
 function App() {
   const audioRef = useRef(null);
@@ -6,48 +9,36 @@ function App() {
 
   const [isStoryPlaying, setIsStoryPlaying] = useState(false);
   const [storyIndex, setStoryIndex] = useState(-1);
-  const [unlocked, setUnlocked] = useState(false); // media unlocked by user gesture
+  const [unlocked, setUnlocked] = useState(false);
 
-  // List your story clips
   const storyVideos = ["/videos/home.mp4"];
 
   useEffect(() => {
-    // Try autoplay background music (will be blocked on many phones until tap)
+    // Try autoplay ambient music; many phones will block until a tap.
     audioRef.current?.play().then(() => {
       setUnlocked(true);
-    }).catch(() => {
-      // silently fail; we’ll start it on first tap if needed
-    });
+    }).catch(() => {});
   }, []);
 
   const handleStartStory = async () => {
     setIsStoryPlaying(true);
-    setStoryIndex(0); // ✅ start at first story index
+    setStoryIndex(0);
 
-    // Ensure background video is in a known state
     if (videoRef.current) {
-      // Switch to story source with sound
       videoRef.current.src = storyVideos[0];
       videoRef.current.loop = false;
-
-      // iOS/Android policies: unmuted play must be in a user gesture
       videoRef.current.muted = false;
-      videoRef.current.removeAttribute("muted"); // ensure attribute removed too
-
+      videoRef.current.removeAttribute("muted");
       try {
-        await videoRef.current.play(); // should work now due to tap
+        await videoRef.current.play();
       } catch {
-        // As a last resort, play muted to show motion, but keep UX flowing
         videoRef.current.muted = true;
         videoRef.current.setAttribute("muted", "");
         await videoRef.current.play().catch(() => {});
       }
     }
 
-    // Pause ambient music during story
     audioRef.current?.pause();
-
-    // If autoplay was blocked before, mark as unlocked now
     if (!unlocked) setUnlocked(true);
   };
 
@@ -60,21 +51,19 @@ function App() {
       try {
         await videoRef.current.play();
       } catch {
-        // keep going muted if needed
         videoRef.current.muted = true;
         videoRef.current.setAttribute("muted", "");
         await videoRef.current.play().catch(() => {});
       }
     } else {
-      // all stories finished → back to ambient
+      // Back to ambient loop
       if (videoRef.current) {
         videoRef.current.src = "/videos/background.mp4";
         videoRef.current.loop = true;
-        videoRef.current.muted = true;              // ✅ background must stay muted
-        videoRef.current.setAttribute("muted", ""); // ensure attribute present
+        videoRef.current.muted = true;
+        videoRef.current.setAttribute("muted", "");
         await videoRef.current.play().catch(() => {});
       }
-      // Resume music if we’re allowed
       if (unlocked) audioRef.current?.play().catch(() => {});
       setIsStoryPlaying(false);
       setStoryIndex(-1);
@@ -83,7 +72,7 @@ function App() {
 
   return (
     <>
-      {/* Background music */}
+      {/* Ambient music */}
       <audio
         ref={audioRef}
         src="/audio/beautiful-in-white.mp3"
@@ -92,68 +81,22 @@ function App() {
         hidden
       />
 
-      {/* Video background */}
-      <div className="fixed inset-0 w-full h-dvh z-0 pointer-events-none">
-        <video
-          ref={videoRef}
-          className="absolute inset-0 w-full h-full object-cover motion-safe:block motion-reduce:hidden"
-          autoPlay
-          muted
-          playsInline
-          preload="metadata"
-          poster="/images/background.jpg"
-          aria-hidden="true"
-          src="/videos/background.mp4"
-          loop={!isStoryPlaying}
-          onEnded={handleVideoEnded}
-        />
-      </div>
+      {/* Background video layer */}
+      <VideoLayer
+        videoRef={videoRef}
+        isStoryPlaying={isStoryPlaying}
+        onEnded={handleVideoEnded}
+      />
 
-      {/* Overlay */}
-      <div className="fixed inset-0 z-[1] bg-black/10 sm:bg-black/15 md:bg-black/20" />
+      {/* Overlay tint */}
+      <Overlay />
 
-      {/* App shell */}
-      <div className="relative z-10 w-full mx-auto min-w-[320px] max-w-[440px] h-[clamp(568px,100svh,956px)] flex flex-col">
-        <header className="p-4 flex items-center justify-center text-[var(--gold)] tracking-wide pt-[calc(env(safe-area-inset-top)+clamp(10svh,15dvh,20lvh))]">
-          <h1
-            className={`font-semibold moul-regular text-[clamp(1.25rem,4vw,1.75rem)] text-center
-              animate-[pop_650ms_cubic-bezier(0.22,1,0.36,1)_both]
-              ${isStoryPlaying ? "hidden" : ""}`}
-          >
-            សិរីមង្គលអាពាហ៍ពិពាហ៍
-          </h1>
-        </header>
+      {/* Foreground hero/content */}
+      <Hero
+        isStoryPlaying={isStoryPlaying}
+        onStart={handleStartStory}
+      />
 
-        <main className="flex-1 flex flex-col items-center justify-center gap-3 text-[var(--gold)] tracking-wider">
-          <span
-            className={`moul-regular text-[clamp(1.2rem,4vw,1.75rem)] text-center
-              animate-[fade-up_700ms_ease-out_both] [animation-delay:120ms]
-              ${isStoryPlaying ? "hidden" : ""}`}
-          >
-            សូមគោរពអញ្ជើញ
-          </span>
-
-          <span
-            className={`moul-regular text-[clamp(1rem,3.2vw,1.5rem)] py-5 text-center
-              animate-[fade-up_700ms_ease-out_both] [animation-delay:240ms]
-              ${isStoryPlaying ? "hidden" : ""}`}
-          >
-            លោក ពិសិដ្ឋ សត្យា
-          </span>
-
-          <button
-            onClick={handleStartStory}
-            className={`px-6 py-2 rounded-xl font-semibold moul-regular
-              text-[var(--gold)] bg-white/5 backdrop-blur-sm
-              border border-[var(--gold)]/60 shadow-md shadow-black/20
-              hover:bg-white/10 transition duration-300
-              focus:outline-none focus:ring-2 focus:ring-[var(--gold)]/40
-              ${isStoryPlaying ? "hidden" : ""}`}
-          >
-            ចូលរួមពិធី
-          </button>
-        </main>
-      </div>
     </>
   );
 }
