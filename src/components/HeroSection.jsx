@@ -1,4 +1,4 @@
-export default function Hero({ isStoryPlaying, onStart }) {
+export default function HeroSection({ isStoryPlaying, onStart }) {
   return (
     <div
       className="

@@ -4,16 +4,16 @@ import "./index.css";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App.jsx"; // Root layout
-import Home from "./pages/Home.jsx";
 import ErrorPage from "./routes/ErrorPage.jsx";
+import CoverPage from "./pages/CoverPage.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,            // main layout
+    element: <App />, // main layout
     errorElement: <ErrorPage />,
     children: [
-      { index: true, element: <Home /> },
+      { index: true, element: <CoverPage /> },
       // add more pages here, e.g.:
       // { path: "gallery", element: <Gallery />, loader: galleryLoader }
       // { path: "rsvp", element: <Rsvp />, action: rsvpAction }
