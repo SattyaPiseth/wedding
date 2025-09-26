@@ -70,7 +70,7 @@ export default function Hero({ isStoryPlaying, onStart }) {
                 focus:outline-none focus:ring-2 focus:ring-[var(--gold)]/40
               "
             >
-              ចូលរួមកម្មវិធី
+              ចូលរួម
             </button>
           </>
         )}
