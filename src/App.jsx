@@ -13,33 +13,76 @@ function App() {
 
   const storyVideos = ["/videos/home.mp4"];
 
-  // useEffect(() => {
-  //   // Try autoplay ambient music; many phones will block until a tap.
-  //   audioRef.current?.play().then(() => {
-  //     setUnlocked(true);
-  //   }).catch(() => {});
-  // }, []);
+  // --- NEW: prime audio during a user gesture so later plays are allowed ---
+  const primeAudio = async () => {
+    const a = audioRef.current;
+    if (!a) return;
+    try {
+      const prevMuted = a.muted;
+      const prevVol = a.volume;
+      a.muted = true;
+      a.volume = 0;
+      await a.play();     // unlock
+      await a.pause();    // stop immediately
+      a.currentTime = 0;  // rewind
+      a.muted = prevMuted;
+      a.volume = prevVol;
+      setUnlocked(true);
+    } catch {
+      // ignore; a second tap will usually unlock if needed
+    }
+  };
 
   const handleStartStory = async () => {
     setIsStoryPlaying(true);
     setStoryIndex(0);
 
-    if (videoRef.current) {
-      videoRef.current.src = storyVideos[0];
-      videoRef.current.loop = false;
-      videoRef.current.muted = false;
-      videoRef.current.removeAttribute("muted");
-      try {
-        await videoRef.current.play();
-      } catch {
-        videoRef.current.muted = true;
-        videoRef.current.setAttribute("muted", "");
-        await videoRef.current.play().catch(() => {});
-      }
+    const v = videoRef.current;
+    const a = audioRef.current;
+
+    // Prime audio + set up video source before trying to play both
+    await primeAudio();
+
+    if (v) {
+      v.src = storyVideos[0];
+      v.loop = false;
+      v.muted = false;                 // try unmuted
+      v.removeAttribute("muted");
     }
 
-    audioRef.current?.pause();
-    if (!unlocked) setUnlocked(true);
+    // START BOTH together on the same user gesture
+    await Promise.all([
+      (async () => {
+        if (!v) return;
+        try {
+          await v.play();
+        } catch {
+          // fallback: some browsers require muted video to start
+          v.muted = true;
+          v.setAttribute("muted", "");
+          await v.play().catch(() => {});
+        }
+      })(),
+      (async () => {
+        if (!a) return;
+        try {
+          a.muted = false;
+          await a.play();
+        } catch {
+          // fallback prime: start muted, unmute next tick
+          try {
+            a.muted = true;
+            await a.play();
+            setTimeout(() => { a.muted = false; }, 0);
+          } catch {
+            // still blocked; another user tap will allow it
+          }
+        }
+      })(),
+    ]);
+
+    // IMPORTANT: remove this old line so music doesn't pause at start
+    // audioRef.current?.pause();  // <-- DELETE
   };
 
   const handleVideoEnded = async () => {
@@ -56,7 +99,7 @@ function App() {
         await videoRef.current.play().catch(() => {});
       }
     } else {
-      // Back to ambient loop
+      // Back to ambient loop (keep audio playing)
       if (videoRef.current) {
         videoRef.current.src = "/videos/background.mp4";
         videoRef.current.loop = true;
@@ -64,7 +107,17 @@ function App() {
         videoRef.current.setAttribute("muted", "");
         await videoRef.current.play().catch(() => {});
       }
-      if (unlocked) audioRef.current?.play().catch(() => {});
+      // If you want music to CONTINUE, do nothing here.
+      // If you want music to STOP after story, uncomment the next line:
+      // audioRef.current?.pause();
+
+      // Optional: if audio was still locked somehow, try again:
+      if (!audioRef.current?.paused && unlocked) {
+        // already playing; no-op
+      } else if (unlocked) {
+        audioRef.current?.play().catch(() => {});
+      }
+
       setIsStoryPlaying(false);
       setStoryIndex(-1);
     }
@@ -96,7 +149,6 @@ function App() {
         isStoryPlaying={isStoryPlaying}
         onStart={handleStartStory}
       />
-
     </>
   );
 }
