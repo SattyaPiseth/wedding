@@ -6,16 +6,14 @@ export default function Hero({ isStoryPlaying, onStart }) {
         w-full min-w-[320px] max-w-[440px]            /* iOS window */
         android:min-w-[360px] android:max-w-[412px]   /* Android window */
         md:max-w-[42rem] lg:max-w-[56rem]
-        h-[clamp(568px,100svh,956px)]
-        android:h-[clamp(772px,100svh,916px)]
+        min-h-[clamp(568px,100dvh,956px)]
+        android:min-h-[clamp(772px,100dvh,916px)]
       "
     >
       <header
         className="
           p-4 flex items-center justify-center text-[var(--gold)] tracking-wide
-          pt-[calc(env(safe-area-inset-top)+clamp(10svh,15dvh,20lvh))]
-          ios:pt-[calc(env(safe-area-inset-top)+12svh)]
-          android:pt-[calc(env(safe-area-inset-top)+10svh)]
+          pt-[calc(var(--safe-top)+var(--pad-top-dynamic)+var(--pad-top-extra))]
         "
       >
         {!isStoryPlaying && (
@@ -36,6 +34,7 @@ export default function Hero({ isStoryPlaying, onStart }) {
           flex-1 flex flex-col items-center justify-center
           text-[var(--gold)] tracking-wider
           gap-3 ios:gap-4 android:gap-3
+          pb-[calc(env(safe-area-inset-bottom,0px)+16px)]
         "
       >
         {!isStoryPlaying && (
@@ -66,6 +65,7 @@ export default function Hero({ isStoryPlaying, onStart }) {
                 border border-[var(--gold)]/60 shadow-md shadow-black/20
                 hover:bg-white/10 transition duration-300
                 focus:outline-none focus:ring-2 focus:ring-[var(--gold)]/40
+                animate-[fade-up_700ms_ease-out_both]
               "
             >
               ចូលរួមកម្មវិធី
