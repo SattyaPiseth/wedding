@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+/* Named device-window variants */
+@custom-variant android {
+  @media (min-width: 360px) and (max-width: 412px)
+         and (min-height: 772px) and (max-height: 916px) {
+    @slot;
+  }
+}
+@custom-variant ios {
+  @media (min-width: 320px) and (max-width: 440px)
+         and (min-height: 568px) and (max-height: 956px) {
+    @slot;
+  }
+}
+
 /* Tokens (single source of truth) */
 :root {
   --gold: #d2ab59;

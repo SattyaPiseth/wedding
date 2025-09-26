@@ -7,7 +7,7 @@ export default function Hero({ isStoryPlaying, onStart }) {
         android:min-w-[360px] android:max-w-[412px]   /* Android window */
         md:max-w-[42rem] lg:max-w-[56rem]
         h-[clamp(568px,100svh,956px)]
-        h-android:h-[clamp(772px,100svh,916px)]
+        android:h-[clamp(772px,100svh,916px)]
       "
     >
       <header
