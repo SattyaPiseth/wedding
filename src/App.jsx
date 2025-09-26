@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useRef, useState, useEffect, useCallback } from "react";
 import VideoLayer from "./components/VideoLayer.jsx";
 import Overlay from "./components/Overlay.jsx";
@@ -9,6 +9,7 @@ const BG_POSTER = "/images/background.jpg";
 const BGMUSIC = "/audio/beautiful-in-white.mp3";
 
 export default function App() {
+  const navigate = useNavigate();
   const audioRef = useRef(null);
   const videoRef = useRef(null);
 
@@ -94,6 +95,7 @@ export default function App() {
     } else {
       setStoryIndex(-1);
       setMode("background"); // returns to background; background won’t loop
+      navigate("/home");
     }
   }, [mode, storyIndex]);
 
@@ -114,7 +116,9 @@ export default function App() {
       <Overlay />
 
       {/* Pass a simple API to children */}
-      <Outlet context={{ mode, startStory }} />
+      <main className="relative z-20">
+        <Outlet context={{ mode, startStory }} />
+      </main>
     </>
   );
 }

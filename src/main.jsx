@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App.jsx"; // Root layout
 import ErrorPage from "./routes/ErrorPage.jsx";
 import CoverPage from "./pages/CoverPage.jsx";
+import { HomePage } from "./pages/HomePage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <CoverPage /> },
+      { path: "home", element: <HomePage /> },
       // add more pages here, e.g.:
       // { path: "gallery", element: <Gallery />, loader: galleryLoader }
       // { path: "rsvp", element: <Rsvp />, action: rsvpAction }
