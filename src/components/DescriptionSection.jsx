@@ -1,4 +1,5 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 
 export const DescriptionSection = () => {
   return (
@@ -44,14 +45,18 @@ export const DescriptionSection = () => {
               <dt className="bayon-regular tracking-wide text-base sm:text-lg">
                 កូនប្រុសនាម
               </dt>
-              <dd className="moul-regular text-[#7a6200] text-lg sm:text-xl">ស៊ឹម ហុងគីម</dd>
+              <dd className="moul-regular text-[#7a6200] text-lg sm:text-xl">
+                ស៊ឹម ហុងគីម
+              </dd>
             </div>
 
             <div className="flex flex-col items-center gap-3">
               <dt className="bayon-regular tracking-wide text-base sm:text-lg">
                 កូនស្រីនាម
               </dt>
-              <dd className="moul-regular text-[#7a6200] text-lg sm:text-xl">តំាង ណារី</dd>
+              <dd className="moul-regular text-[#7a6200] text-lg sm:text-xl">
+                តំាង ណារី
+              </dd>
             </div>
           </dl>
         </section>
@@ -68,6 +73,18 @@ export const DescriptionSection = () => {
           <p className="siemreap-regular text-sm sm:text-base md:text-lg leading-normal sm:leading-relaxed md:leading-loose">
             ភោជនីយដ្ឋាន ឡាក់គីប្រាយ
           </p>
+          <NavLink
+            to={"https://maps.app.goo.gl/wfxRAjRtuJJxaYPv8"}
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-1 m-2 p-3 moul-regular text-[#7a6200] tracking-wide hover:scale-105 hover:text-[#a07d00] transition-transform cursor-pointer"
+          >
+            <img
+              className="w-7 h-auto sm:w-8"
+              src="/images/google-maps.png"
+              alt="location"
+            />
+            <span className="text-sm hover:underline pt-2">បើកមើលទីតាំង</span>
+          </NavLink>
         </section>
       </div>
     </section>
