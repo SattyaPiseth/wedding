@@ -1,28 +1,14 @@
 @import "tailwindcss";
 
-/* Named device-window variants */
-@custom-variant android {
-  @media (min-width: 360px) and (max-width: 412px) and (min-height: 772px) and (max-height: 916px) {
-    @slot;
-  }
-}
-@custom-variant ios {
-  @media (min-width: 320px) and (max-width: 440px) and (min-height: 568px) and (max-height: 956px) {
-    @slot;
-  }
-}
-
 /* Tokens (single source of truth) */
 :root {
   --gold: #d2ab59;
-  /* Safe area top (with fallback for non-notch devices) */
   --safe-top: env(safe-area-inset-top, 0px);
-  /* Base dynamic top padding: clamp(min, ideal, max) using svh/dvh/lvh */
   --pad-top-dynamic: clamp(9svh, 13dvh, 15lvh);
-  --pad-top-extra: 0px; /* OFF by default (all platforms) */
+  --pad-top-extra: 0px;
 }
 
-/* Turn extra ON only on iOS Safari phones */
+/* iOS Safari phones: small extra top pad */
 @supports (-webkit-touch-callout: none) {
   @media (hover: none) and (pointer: coarse) and (max-width: 480px) {
     :root {
@@ -31,7 +17,7 @@
   }
 }
 
-/* ✅ Put orientation override AFTER the base so it wins when matched */
+/* Orientation override AFTER base */
 @media (orientation: landscape) {
   :root {
     --pad-top-dynamic: clamp(7svh, 11dvh, 13lvh);
@@ -39,63 +25,25 @@
 }
 
 /* Minimal base */
-html,
-body,
-#root {
-  height: 100%;
-}
+html, body, #root { height: 100%; }
 
 /* A11y: motion */
 @media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
-  }
+  * { animation: none !important; transition: none !important; }
 }
 
-/* Khmer display font */
-.moul-regular {
-  font-family: "Moul", serif;
-  font-weight: 400;
-  font-style: normal;
-}
+/* Khmer fonts */
+.moul-regular { font-family: "Moul", serif; font-weight: 400; }
+.bayon-regular { font-family: "Bayon", sans-serif; font-weight: 400; }
+.siemreap-regular { font-family: "Siemreap", sans-serif; font-weight: 400; }
 
-.bayon-regular {
-  font-family: "Bayon", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.siemreap-regular {
-  font-family: "Siemreap", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
-
-/* Keyframes only (used via Tailwind's arbitrary animate-[...] class) */
+/* Keyframes (used via animate-[...]) */
 @keyframes pop {
-  0% {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-  60% {
-    opacity: 1;
-    transform: scale(1.02);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+  0% { opacity: 0; transform: scale(0.96); }
+  60% { opacity: 1; transform: scale(1.02); }
+  100% { opacity: 1; transform: scale(1); }
 }
-
 @keyframes fade-up {
-  0% {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
 }

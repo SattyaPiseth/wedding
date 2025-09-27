@@ -4,7 +4,7 @@ export default function CoverSection({ isStoryPlaying = false, onStart }) {
       className="
         flex-1 flex flex-col items-center justify-center
         text-[var(--gold)] tracking-wider
-        gap-3 ios:gap-4 android:gap-3
+        gap-3 
         pb-[calc(env(safe-area-inset-bottom,0px)+16px)]
       "
     >
