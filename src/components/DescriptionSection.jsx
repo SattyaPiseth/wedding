@@ -73,8 +73,9 @@ export const DescriptionSection = () => {
           <p className="siemreap-regular text-sm sm:text-base md:text-lg leading-normal sm:leading-relaxed md:leading-loose">
             ភោជនីយដ្ឋាន ឡាក់គីប្រាយ
           </p>
-          <NavLink
-            to={"https://maps.app.goo.gl/wfxRAjRtuJJxaYPv8"}
+          <a
+            href="https://maps.app.goo.gl/RYe1oXVT9cLspnSC8"
+            target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-1 m-2 p-3 moul-regular text-[#7a6200] tracking-wide hover:scale-105 hover:text-[#a07d00] transition-transform cursor-pointer"
           >
@@ -84,7 +85,7 @@ export const DescriptionSection = () => {
               alt="location"
             />
             <span className="text-sm hover:underline pt-2">បើកមើលទីតាំង</span>
-          </NavLink>
+          </a>
         </section>
       </div>
     </section>
