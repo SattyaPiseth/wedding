@@ -13,6 +13,7 @@ export const HomePage = () => {
           sm:max-w-[42rem]
           lg:max-w-[56rem]
           min-h-[100dvh]
+
       "
       >
         <Heading />
