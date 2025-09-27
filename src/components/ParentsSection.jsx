@@ -18,12 +18,6 @@ mx-auto max-w-screen-lg
         md:gap-x-32 md:gap-y-6 md:py-10
         lg:gap-x-24 lg:gap-y-8
 
-        /* Typography: never shrink on larger screens */
-       
-        sm:text-xl
-        md:text-2xl
-        lg:text-3xl
-
         /* Device overrides (mobile only) */
         android:gap-y-8
         android:gap-x-6
