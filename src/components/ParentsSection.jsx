@@ -26,7 +26,7 @@ mx-auto max-w-screen-lg
 
         /* Device overrides (mobile only) */
         android:gap-y-8
-        android:gap-x-6
+        android:gap-x-8
         ios:gap-x-12
 
         bayon-regular
