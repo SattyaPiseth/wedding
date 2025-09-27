@@ -12,6 +12,8 @@ mx-auto max-w-screen-lg
         justify-items-start
         text-left
 
+        text-base sm:text-lg md:text-xl lg:text-lg
+
         /* Gaps: base -> sm default -> md/lg override */
         gap-x-3 gap-y-3
         sm:gap-6
