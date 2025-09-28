@@ -4,6 +4,7 @@ import VideoLayer from "./components/VideoLayer.jsx";
 import Overlay from "./components/Overlay.jsx";
 import Aos from "aos";
 import "aos/dist/aos.css";
+import Seo19 from "./components/Seo19.jsx";
 
 const STORY_VIDEOS = ["/videos/home.mp4"];
 const BGMUSIC = "/audio/beautiful-in-white.mp3";
@@ -182,6 +183,8 @@ export default function App() {
 
   return (
     <>
+      {/* Site-wide SEO defaults (pages can override) */}
+      <Seo19 />
       {/* Ambient music */}
       <audio ref={audioRef} src={BGMUSIC} preload="auto" loop hidden />
 
