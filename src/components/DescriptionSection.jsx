@@ -1,6 +1,10 @@
 import SoftCard from "./SoftCard";
 import { MasonryGallery } from "./gallery/MasonryGallery";
 import { GALLERY_IMAGES } from "./../data/galleryImages";
+import google_map_icon from "/images/google-maps.png";
+import morning_event_image from "/images/morning-event.png";
+import afternoon_event_image from "/images/afternoon-event.png";
+
 
 export const DescriptionSection = () => {
   return (
@@ -68,21 +72,24 @@ export const DescriptionSection = () => {
           >
             <img
               className="w-7 h-auto sm:w-8"
-              src="/images/google-maps.png"
+              src={google_map_icon}
+              loading="lazy"
               alt="location"
             />
             <span className="text-sm hover:underline pt-2">បើកមើលទីតាំង</span>
           </a>
         </section>
         <img
-          src="images/morning-event.png"
+          src={morning_event_image}
           alt="morning event image"
+          loading="lazy"
           data-aos="fade-up"
           data-aos-anchor-placement="top-bottom"
         />
         <img
-          src="images/afternoon-event.png"
+          src={afternoon_event_image}
           alt="afternoon event image"
+          loading="lazy"
           data-aos="fade-up"
           data-aos-anchor-placement="top-bottom"
         />
