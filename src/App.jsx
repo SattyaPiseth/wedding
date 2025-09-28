@@ -5,7 +5,6 @@ import Overlay from "./components/Overlay.jsx";
 import Aos from "aos";
 import "aos/dist/aos.css";
 
-
 const STORY_VIDEOS = ["/videos/home.mp4"];
 const BGMUSIC = "/audio/beautiful-in-white.mp3";
 
@@ -108,22 +107,51 @@ export default function App() {
     const a = audioRef.current;
     if (!v) return;
 
+    // const applyAndPlay = async (src, { loop }) => {
+    //   v.loop = !!loop;
+    //   v.muted = true;
+    //   v.setAttribute("muted", ""); // always muted
+
+    //   const absolute = window.location.origin + src;
+    //   if (v.src !== absolute) {
+    //     v.src = src; // relative OK
+    //     v.load(); // reset pipeline deterministically
+    //   }
+
+    //   try {
+    //     await v.play();
+    //   } catch {
+    //     // Already muted; one safe retry is enough
+    //     await v.play().catch(() => {});
+    //   }
+    // };
+    // inside App.jsx, replace applyAndPlay with:
     const applyAndPlay = async (src, { loop }) => {
+      const v = videoRef.current;
+      if (!v) return;
+
       v.loop = !!loop;
       v.muted = true;
-      v.setAttribute("muted", ""); // always muted
+      v.setAttribute("muted", "");
 
-      const absolute = window.location.origin + src;
-      if (v.src !== absolute) {
-        v.src = src; // relative OK
-        v.load(); // reset pipeline deterministically
+      // Only update when different
+      const absolute = new URL(src, window.location.origin).href;
+      const same = v.currentSrc === absolute || v.src === absolute;
+
+      if (!same) {
+        // If you keep <source> children in VideoLayer, prefer swapping poster/route,
+        // not v.src. But if you do swap v.src, await metadata once:
+        v.src = src;
+        await new Promise((res) => {
+          const on = () => (v.removeEventListener("loadedmetadata", on), res());
+          v.addEventListener("loadedmetadata", on, { once: true });
+        });
       }
 
       try {
         await v.play();
       } catch {
-        // Already muted; one safe retry is enough
-        await v.play().catch(() => {});
+        /* ignore (autoplay policies) */
       }
     };
 
