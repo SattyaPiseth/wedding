@@ -94,7 +94,11 @@ export const DescriptionSection = () => {
           data-aos-anchor-placement="top-bottom"
         />
 
-        <section className=" flex flex-col items-center justify-center gap-3 text-3xl">
+        <section
+          className=" flex flex-col items-center justify-center gap-3 text-3xl"
+          data-aos="fade-up"
+          data-aos-anchor-placement="top-bottom"
+        >
           <h1 className="great-vibes-regular tracking-wide">Save The Date</h1>
           <h2 className="great-vibes-regular text-xl tracking-wider">
             K&R The Weeding
