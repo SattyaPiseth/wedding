@@ -2,6 +2,9 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useRef, useState, useEffect, useCallback } from "react";
 import VideoLayer from "./components/VideoLayer.jsx";
 import Overlay from "./components/Overlay.jsx";
+import Aos from "aos";
+import "aos/dist/aos.css";
+
 
 const STORY_VIDEOS = ["/videos/home.mp4"];
 const BGMUSIC = "/audio/beautiful-in-white.mp3";
@@ -52,6 +55,17 @@ export default function App() {
     [routeBg]
   );
   const resetBackground = useCallback(() => setBgOverride(null), []);
+
+  // Init once
+  useEffect(() => {
+    Aos.init({
+      duration: 800,
+      easing: "ease-in-out",
+      once: true, // animate only the first time element enters viewport
+      // mirror: false,    // set true if you want to animate on scroll-up too
+      // offset: 0,        // adjust trigger offset if needed
+    });
+  }, []);
 
   // clear override on route change
   useEffect(() => {

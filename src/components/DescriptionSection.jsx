@@ -104,6 +104,8 @@ export const DescriptionSection = () => {
               src={src}
               alt={`Gallery image ${i + 1}`}
               className="mb-4 rounded-lg break-inside-avoid"
+              data-aos="fade-up"
+              data-aos-delay={i * 100}
             />
           ))}
         </section>
