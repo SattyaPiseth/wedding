@@ -107,7 +107,10 @@ export const DescriptionSection = () => {
           </a>
 
           {/* Responsive iframe with Tailwind v4 aspect-video */}
-          <div className="w-full aspect-video rounded-b-sm overflow-hidden shadow-md">
+          <div
+            className="w-full aspect-video rounded-b-sm overflow-hidden shadow-md"
+            data-aos="flip-up"
+          >
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3907.962391983032!2d104.88787669999999!3d11.6260304!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310953f0257737cd%3A0xac98c76694cbd37c!2sLucky%20Bright%20Restaurant!5e0!3m2!1sen!2suk!4v1759070792826!5m2!1sen!2suk"
               className="w-full h-full border-0"
