@@ -54,7 +54,7 @@ export const DescriptionSection = () => {
         </section>
 
         {/* EventMeta */}
-        <section className="flex flex-col gap-3 sm:gap-4 md:gap-5 leading-loose">
+        {/* <section className="flex flex-col gap-3 sm:gap-4 md:gap-5 leading-loose">
           <p className="siemreap-regular text-sm sm:text-base md:text-lg leading-normal sm:leading-relaxed md:leading-loose">
             ដែលនឹងប្រព្រឹត្តទៅ ចាប់ពីម៉ោង ៥ ល្ងាច
           </p>
@@ -78,7 +78,46 @@ export const DescriptionSection = () => {
             />
             <span className="text-sm hover:underline pt-2">បើកមើលទីតាំង</span>
           </a>
+        </section> */}
+        <section className="flex flex-col gap-3 sm:gap-4 md:gap-5 leading-loose">
+          <p className="siemreap-regular text-sm sm:text-base md:text-lg leading-normal sm:leading-relaxed md:leading-loose">
+            ដែលនឹងប្រព្រឹត្តទៅ ចាប់ពីម៉ោង ៥ ល្ងាច
+          </p>
+          <p className="moul-regular text-[#7a6200] text-sm sm:text-base md:text-lg leading-relaxed md:leading-[1.7]">
+            នៅថ្ងៃអាទិត្យ ទី៣០​ខែវិច្ឆិកា ឆ្នំា ២០២៥
+          </p>
+          <p className="siemreap-regular text-sm sm:text-base md:text-lg leading-normal sm:leading-relaxed md:leading-loose">
+            ភោជនីយដ្ឋាន ឡាក់គីប្រាយ
+          </p>
+
+          {/* Map link button */}
+          <a
+            href="https://maps.app.goo.gl/usZXcfNpkuQMZxr27"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-1 m-2 p-3 moul-regular text-[#7a6200] tracking-wide hover:scale-105 hover:text-[#a07d00] transition-transform cursor-pointer"
+          >
+            <img
+              className="w-7 h-auto sm:w-8"
+              src={google_map_icon}
+              loading="lazy"
+              alt="location"
+            />
+            <span className="text-sm hover:underline pt-2">បើកមើលទីតាំង</span>
+          </a>
+
+          {/* Responsive iframe with Tailwind v4 aspect-video */}
+          <div className="w-full aspect-video rounded-b-sm overflow-hidden shadow-md">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3907.962391983032!2d104.88787669999999!3d11.6260304!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310953f0257737cd%3A0xac98c76694cbd37c!2sLucky%20Bright%20Restaurant!5e0!3m2!1sen!2suk!4v1759070792826!5m2!1sen!2suk"
+              className="w-full h-full border-0"
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </div>
         </section>
+
         <img
           src={morning_event_image}
           alt="morning event image"
