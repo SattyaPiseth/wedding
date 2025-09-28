@@ -25,25 +25,62 @@
 }
 
 /* Minimal base */
-html, body, #root { height: 100%; }
+html,
+body,
+#root {
+  height: 100%;
+}
 
 /* A11y: motion */
 @media (prefers-reduced-motion: reduce) {
-  * { animation: none !important; transition: none !important; }
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
 /* Khmer fonts */
-.moul-regular { font-family: "Moul", serif; font-weight: 400; }
-.bayon-regular { font-family: "Bayon", sans-serif; font-weight: 400; }
-.siemreap-regular { font-family: "Siemreap", sans-serif; font-weight: 400; }
+.moul-regular {
+  font-family: "Moul", serif;
+  font-weight: 400;
+}
+.bayon-regular {
+  font-family: "Bayon", sans-serif;
+  font-weight: 400;
+}
+.siemreap-regular {
+  font-family: "Siemreap", sans-serif;
+  font-weight: 400;
+}
+.great-vibes-regular {
+  font-family: "Great Vibes", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
 
 /* Keyframes (used via animate-[...]) */
 @keyframes pop {
-  0% { opacity: 0; transform: scale(0.96); }
-  60% { opacity: 1; transform: scale(1.02); }
-  100% { opacity: 1; transform: scale(1); }
+  0% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 @keyframes fade-up {
-  0% { opacity: 0; transform: translateY(8px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

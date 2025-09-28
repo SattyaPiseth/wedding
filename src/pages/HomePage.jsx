@@ -19,6 +19,7 @@ export const HomePage = () => {
         <Heading />
         <ParentsSection />
         <DescriptionSection />
+        
         {/* <div className="h-2 bg-yellow-500 sm:bg-green-400 md:bg-amber-950 lg:bg-red-700" /> */}
       </div>
     </>

@@ -4,7 +4,7 @@ import { GALLERY_IMAGES } from "./../data/galleryImages";
 import google_map_icon from "/images/google-maps.png";
 import morning_event_image from "/images/morning-event.png";
 import afternoon_event_image from "/images/afternoon-event.png";
-
+import Countdown from "./Countdown";
 
 export const DescriptionSection = () => {
   return (
@@ -93,6 +93,19 @@ export const DescriptionSection = () => {
           data-aos="fade-up"
           data-aos-anchor-placement="top-bottom"
         />
+
+        <section className=" flex flex-col items-center justify-center gap-3 text-3xl">
+          <h1 className="great-vibes-regular tracking-wide">Save The Date</h1>
+          <h2 className="great-vibes-regular text-xl tracking-wider">
+            K&R The Weeding
+          </h2>
+
+          {/* Example: target date with +07:00 offset for Cambodia */}
+          <Countdown
+            target="2025-11-30T07:00:00+07:00"
+            ariaLabel="Wedding Countdown"
+          />
+        </section>
         <h3
           className="moul-regular text-lg"
           data-aos="fade-up"
