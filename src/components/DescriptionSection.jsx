@@ -86,6 +86,13 @@ export const DescriptionSection = () => {
           data-aos="fade-up"
           data-aos-anchor-placement="top-bottom"
         />
+        <h3
+          className="moul-regular text-lg"
+          data-aos="fade-up"
+          data-aos-anchor-placement="top-bottom"
+        >
+          កម្រងរូបភាព
+        </h3>
         {/* Gallery */}
         <MasonryGallery images={GALLERY_IMAGES} />
       </SoftCard>
