@@ -1,6 +1,6 @@
 export default function VideoLayer({ videoRef, poster, onEnded }) {
   return (
-    <div className="fixed inset-0 w-full h-dvh z-0 pointer-events-none bg-black">
+    <div className="fixed inset-0 w-full h-svh z-0 pointer-events-none bg-black">
       <video
         ref={videoRef}
         className="absolute inset-0 w-full h-full object-cover motion-safe:block motion-reduce:hidden [@media_(orientation:landscape)]:object-contain"
