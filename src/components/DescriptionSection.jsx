@@ -1,5 +1,4 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
 
 export const DescriptionSection = () => {
   return (
@@ -86,6 +85,26 @@ export const DescriptionSection = () => {
             />
             <span className="text-sm hover:underline pt-2">បើកមើលទីតាំង</span>
           </a>
+        </section>
+        <div className="my-5 sm:my-6 md:my-8 h-px bg-white/10" />
+        <section className="columns-2 md:columns-4 gap-4 space-y-4">
+          {[
+            "images/landscape-01.jpg",
+            "images/portrait-01.jpg",
+            "images/landscape-02.jpg",
+            "images/portrait-02.jpg",
+            "images/portrait-03.jpg",
+            "images/landscape-03.jpg",
+            "images/portrait-04.jpg",
+            "images/landscape-04.jpg",
+          ].map((src, i) => (
+            <img
+              key={i}
+              src={src}
+              alt={`Gallery image ${i + 1}`}
+              className="mb-4 rounded-lg break-inside-avoid"
+            />
+          ))}
         </section>
       </div>
     </section>
