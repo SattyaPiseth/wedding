@@ -25,7 +25,7 @@ const BG_BY_ROUTE = {
   },
   "/home": {
     src: "/videos/bg-homepage.mp4",
-    poster: "/images/home-bg.jpg",
+    poster: "/images/home-bg.png",
     loop: false,
     // muted: true,
   },
