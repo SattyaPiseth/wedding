@@ -19,7 +19,7 @@ export const ParentsSection = () => {
         bayon-regular text-[#bc9c22]
   "
     >
-      <div className="animate-[fade-up_0.6s_ease-out]">លោក ស៊ីម សារីម</div>
+      <div className="animate-[fade-up_0.6s_ease-out]">លោក សុឹម សារីម</div>
       <div className="animate-[fade-up_0.6s_ease-out]">លោក តាំង វ៉ា</div>
       <div className="animate-[fade-up_0.6s_ease-out]">លោកស្រី លី ខេង</div>
       <div className="animate-[fade-up_0.6s_ease-out]">លោកស្រី ម៉ាច ប៊ុននី</div>

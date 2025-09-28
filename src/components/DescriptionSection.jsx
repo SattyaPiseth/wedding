@@ -19,13 +19,13 @@ export const DescriptionSection = () => {
           id="invite-title"
           className="bayon-regular text-balance text-lg sm:text-xl md:text-2xl tracking-wide"
         >
-          សូមគោរពអញ្ជើញ
+          មានកិត្តិយសសូមគោរពអញ្ជើញ
         </h2>
         <p className="siemreap-regular text-sm sm:text-base md:text-lg tracking-wide leading-relaxed">
-          សម្ដេច ទ្រង់ ឯកឧត្ដម អ្នកឧកញ៉ា ឧកញ៉ា លោកជំទាវ លោក​ លោកស្រី
-          អ្នកនាងកញ្ញា អញ្ជើញចូលរួមជាអធិបតី និងជាភៀវកិត្តិយស ដើម្បីប្រសិទ្ធពរជ័យ
-          សិរិសួស្ដី ជ័យមង្គល ក្នុងពិធីរៀបអាពាហ៍ពិពាហ៍ កូនប្រុស‍‍‌-ស្រី
-          របស់យើងខ្ញុំ
+          សម្ដេច ទ្រង់ ឯកឧត្ដម លោកឧកញ៉ា លោកជំទាវ លោក​ លោកស្រី អ្នកនាង កញ្ញា និង
+          ប្រិយមិត្ត អញ្ជើញចូលរួមជាអធិបតី និង​ ជាភ្ញៀវកិត្តិយស
+          ដើម្បីប្រសិទ្ធពរជ័យ សិរិសួស្ដី ជ័យមង្គល ក្នុងពិធីរៀបអាពាហ៍ពិពាហ៍
+          កូនប្រុស‍‍‌-ស្រី របស់យើងខ្ញុំ។
         </p>
 
         {/* CoupleNames */}
@@ -47,7 +47,7 @@ export const DescriptionSection = () => {
                 កូនស្រីនាម
               </dt>
               <dd className="moul-regular text-[#7a6200] text-lg sm:text-xl">
-                តំាង ណារី
+                តាំង ណារី
               </dd>
             </div>
           </dl>
