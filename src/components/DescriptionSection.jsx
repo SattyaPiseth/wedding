@@ -5,7 +5,8 @@ export const DescriptionSection = () => {
     <section
       lang="km"
       aria-labelledby="invite-title"
-      className="mx-auto max-w-2xl px-4 py-6 sm:px-12 sm:py-8 md:px-28 lg:px-32"
+      // py-6
+      className="mx-auto max-w-2xl px-4 sm:px-12 sm:py-8 md:px-28 lg:px-32"
     >
       {/* soft glass card */}
       <div
