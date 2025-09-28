@@ -74,7 +74,18 @@ export const DescriptionSection = () => {
             <span className="text-sm hover:underline pt-2">បើកមើលទីតាំង</span>
           </a>
         </section>
-
+        <img
+          src="images/morning-event.png"
+          alt="morning event image"
+          data-aos="fade-up"
+          data-aos-anchor-placement="top-bottom"
+        />
+        <img
+          src="images/afternoon-event.png"
+          alt="afternoon event image"
+          data-aos="fade-up"
+          data-aos-anchor-placement="top-bottom"
+        />
         {/* Gallery */}
         <MasonryGallery images={GALLERY_IMAGES} />
       </SoftCard>
