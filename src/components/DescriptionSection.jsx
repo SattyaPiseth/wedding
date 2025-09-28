@@ -1,45 +1,34 @@
-import React from "react";
+import SoftCard from "./SoftCard";
+import { MasonryGallery } from "./gallery/MasonryGallery";
+import { GALLERY_IMAGES } from "./../data/galleryImages";
 
 export const DescriptionSection = () => {
   return (
     <section
       lang="km"
       aria-labelledby="invite-title"
-      // py-6
       className="mx-auto max-w-2xl px-4 sm:px-12 sm:py-8 md:px-28 lg:px-32"
     >
-      {/* soft glass card */}
-      <div
-        className="
-          text-center text-[#bc9c22]
-          rounded-xl p-5 sm:p-7 md:p-8
-          bg-white/10 backdrop-blur-sm
-          border border-white/20
-          shadow-sm
-          animate-[fade-up_700ms_ease-out_both] [animation-delay:120ms]
-        "
-      >
+      <SoftCard>
+        {/* InviteHeading */}
         <h2
           id="invite-title"
           className="bayon-regular text-balance text-lg sm:text-xl md:text-2xl tracking-wide"
         >
           សូមគោរពអញ្ជើញ
         </h2>
-
-        <p className="mt-3 sm:mt-4 md:mt-5 siemreap-regular text-sm sm:text-base md:text-lg tracking-wide leading-relaxed">
+        <p className="siemreap-regular text-sm sm:text-base md:text-lg tracking-wide leading-relaxed">
           សម្ដេច ទ្រង់ ឯកឧត្ដម អ្នកឧកញ៉ា ឧកញ៉ា លោកជំទាវ លោក​ លោកស្រី
           អ្នកនាងកញ្ញា អញ្ជើញចូលរួមជាអធិបតី និងជាភៀវកិត្តិយស ដើម្បីប្រសិទ្ធពរជ័យ
           សិរិសួស្ដី ជ័យមង្គល ក្នុងពិធីរៀបអាពាហ៍ពិពាហ៍ កូនប្រុស‍‍‌-ស្រី
           របស់យើងខ្ញុំ
         </p>
 
-        <div className="my-5 sm:my-6 md:my-8 h-px bg-white/10" />
-
-        <section lang="km" aria-labelledby="couple-title">
+        {/* CoupleNames */}
+        <section aria-labelledby="couple-title">
           <h3 id="couple-title" className="sr-only">
             ឈ្មោះកូនប្រុស និងកូនស្រី
           </h3>
-
           <dl className="mx-auto max-w-screen-md grid grid-cols-2 gap-4 sm:gap-6">
             <div className="flex flex-col items-center gap-3">
               <dt className="bayon-regular tracking-wide text-base sm:text-lg">
@@ -49,7 +38,6 @@ export const DescriptionSection = () => {
                 ស៊ឹម ហុងគីម
               </dd>
             </div>
-
             <div className="flex flex-col items-center gap-3">
               <dt className="bayon-regular tracking-wide text-base sm:text-lg">
                 កូនស្រីនាម
@@ -61,20 +49,19 @@ export const DescriptionSection = () => {
           </dl>
         </section>
 
-        <div className="my-5 sm:my-6 md:my-8 h-px bg-white/10" />
-
+        {/* EventMeta */}
         <section className="flex flex-col gap-3 sm:gap-4 md:gap-5 leading-loose">
           <p className="siemreap-regular text-sm sm:text-base md:text-lg leading-normal sm:leading-relaxed md:leading-loose">
             ដែលនឹងប្រព្រឹត្តទៅ ចាប់ពីម៉ោង ៥ ល្ងាច
           </p>
           <p className="moul-regular text-[#7a6200] text-sm sm:text-base md:text-lg leading-relaxed md:leading-[1.7]">
-            នៅថ្ងៃអាទិត្យ ទី៣០ ខែវិច្ឆិកា ឆ្នំា២០២៥
+            នៅថ្ងៃអាទិត្យ ទី៣០​ខែវិច្ឆិកា ឆ្នំា ២០២៥
           </p>
           <p className="siemreap-regular text-sm sm:text-base md:text-lg leading-normal sm:leading-relaxed md:leading-loose">
             ភោជនីយដ្ឋាន ឡាក់គីប្រាយ
           </p>
           <a
-            href="https://maps.app.goo.gl/RYe1oXVT9cLspnSC8"
+            href="https://maps.app.goo.gl/usZXcfNpkuQMZxr27"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-1 m-2 p-3 moul-regular text-[#7a6200] tracking-wide hover:scale-105 hover:text-[#a07d00] transition-transform cursor-pointer"
@@ -87,29 +74,10 @@ export const DescriptionSection = () => {
             <span className="text-sm hover:underline pt-2">បើកមើលទីតាំង</span>
           </a>
         </section>
-        <div className="my-5 sm:my-6 md:my-8 h-px bg-white/10" />
-        <section className="columns-2 md:columns-4 gap-4 space-y-4">
-          {[
-            "images/landscape-01.jpg",
-            "images/portrait-01.jpg",
-            "images/landscape-02.jpg",
-            "images/portrait-02.jpg",
-            "images/portrait-03.jpg",
-            "images/landscape-03.jpg",
-            "images/portrait-04.jpg",
-            "images/landscape-04.jpg",
-          ].map((src, i) => (
-            <img
-              key={i}
-              src={src}
-              alt={`Gallery image ${i + 1}`}
-              className="mb-4 rounded-lg break-inside-avoid"
-              data-aos="fade-up"
-              data-aos-delay={i * 100}
-            />
-          ))}
-        </section>
-      </div>
+
+        {/* Gallery */}
+        <MasonryGallery images={GALLERY_IMAGES} />
+      </SoftCard>
     </section>
   );
 };
