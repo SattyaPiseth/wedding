@@ -20,11 +20,11 @@ export default function Heading({ isStoryPlaying = false }) {
           className="
             block mx-auto h-auto aspect-[1982/520] select-none
             /* Mobile-first fluid */
-            w-[clamp(380px,48vw,560px)] 
+            w-[clamp(420px,52vw,600px)] 
             -mt-[clamp(0px,1.8vw,12px)]
 
-            sm:w-[420px]
-            sm:-mt-[4rem]
+            sm:w-[460px]
+            sm:-mt-[3rem]
 
             /* Tablet (≥768px): slightly bigger, a bit more lift */
             md:w-[clamp(520px,45vw,640px)]
