@@ -12,7 +12,7 @@ const BGMUSIC = "/audio/beautiful-in-white.mp3";
 // Default + route backgrounds
 const DEFAULT_BG = {
   src: "/videos/background.mp4",
-  poster: "/images/background.jpg",
+  poster: "/images/background.png",
   loop: true,
   // muted: true,
 };
