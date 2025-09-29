@@ -4,8 +4,9 @@
 :root {
   --gold: #d2ab59;
   --safe-top: env(safe-area-inset-top, 0px);
-  --pad-top-dynamic: clamp(9svh, 13dvh, 15lvh);
-  --pad-top-extra: 0px;
+  --pad-top-dynamic: clamp(9svh, 13dvh, 15lvh); 
+  /* --pad-top-dynamic: clamp(5svh, 8dvh, 10lvh); */
+  --pad-top-extra: -30px;
 }
 
 /* iOS Safari phones: small extra top pad */

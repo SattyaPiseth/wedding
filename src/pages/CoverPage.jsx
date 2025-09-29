@@ -16,9 +16,11 @@ export default function CoverPage() {
         lg:max-w-[56rem]
         min-h-[100dvh]
       "
+       data-aos="zoom-in"
     >
       <Heading isStoryPlaying={isStoryPlaying} />
       <CoverSection isStoryPlaying={isStoryPlaying} onStart={startStory} />
+      {/* <div className="h-2 bg-yellow-500 sm:bg-green-400 md:bg-amber-950 lg:bg-red-700" /> */}
     </div>
   );
 }
