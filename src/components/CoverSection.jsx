@@ -10,7 +10,7 @@ export default function CoverSection({ isStoryPlaying = false, onStart }) {
       {!isStoryPlaying && (
         <>
           <img
-            className="block mx-auto h-auto w-[clamp(56%,70vw,82%)] max-w-[min(350px,85%)]"
+            className="block mx-auto h-auto w-[clamp(56%,70vw,82%)] max-w-[min(350px,50%)]"
             src="/images/cover-page/name-cover.png"
             alt="Cover"
           />
