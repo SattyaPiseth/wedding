@@ -2,14 +2,18 @@ export default function CoverSection({ isStoryPlaying = false, onStart }) {
   return (
     <main
       className="
-        flex-1 flex flex-col items-center justify-center
+        flex flex-col items-center justify-center
         text-[var(--gold)] tracking-wider
         gap-3 
-        pb-[calc(env(safe-area-inset-bottom,0px)+16px)]
       "
     >
       {!isStoryPlaying && (
         <>
+          <img
+            className="block mx-auto h-auto w-[clamp(56%,70vw,82%)] max-w-[min(350px,85%)]"
+            src="/images/cover-page/name-cover.png"
+            alt="Cover"
+          />
           <span
             className="
               moul-regular text-center

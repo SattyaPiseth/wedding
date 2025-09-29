@@ -20,7 +20,7 @@ const DEFAULT_BG = {
 const BG_BY_ROUTE = {
   "/": {
     src: "/videos/background.mp4",
-    poster: "/images/background.jpg",
+    poster: "/images/background.png",
     loop: true,
     // muted: true,
   },

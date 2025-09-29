@@ -16,13 +16,11 @@ export default function CoverPage() {
         min-h-[100dvh]
       "
       data-aos="zoom-in"
-      
     >
       <Heading isStoryPlaying={isStoryPlaying} />
+    
       <CoverSection isStoryPlaying={isStoryPlaying} onStart={startStory} />
       {/* <div className="h-2 bg-yellow-500 sm:bg-green-400 md:bg-rose-200 lg:bg-red-700 xl:bg-cyan-600 2xl:bg-black" /> */}
     </div>
-          
-
   );
 }
