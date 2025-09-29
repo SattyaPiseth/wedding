@@ -6,6 +6,7 @@ export default function Heading({ isStoryPlaying = false }) {
         pt-[calc(var(--safe-top)+var(--pad-top-dynamic)+var(--pad-top-extra))]
       "
       aria-label="សិរីមង្គលអាពាហ៍ពិពាហ៍"
+      data-aos="fade-down"
     >
       {/* Keep semantic h1 for a11y/SEO */}
       <h1 className="sr-only">សិរីមង្គលអាពាហ៍ពិពាហ៍</h1>
