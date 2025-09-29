@@ -1,26 +1,3 @@
-// export default function Heading({ isStoryPlaying = false }) {
-//   return (
-//     <header
-//       className="
-//         p-4 flex items-center justify-center text-[var(--gold)] tracking-wide
-//         pt-[calc(var(--safe-top)+var(--pad-top-dynamic)+var(--pad-top-extra))]
-//       "
-//     >
-//       {!isStoryPlaying && (
-//         <h1
-//           className="
-//             font-semibold moul-regular text-center
-//             text-[clamp(1.20rem,4vw,1.75rem)]
-//             animate-[pop_650ms_cubic-bezier(0.22,1,0.36,1)_both]
-//           "
-//         >
-//           សិរីមង្គលអាពាហ៍ពិពាហ៍
-//         </h1>
-//       )}
-//     </header>
-//   );
-// }
-
 export default function Heading({ isStoryPlaying = false }) {
   return (
     <header
@@ -28,6 +5,7 @@ export default function Heading({ isStoryPlaying = false }) {
         p-4 flex items-center justify-center tracking-wide text-[var(--gold)]
         pt-[calc(var(--safe-top)+var(--pad-top-dynamic)+var(--pad-top-extra))]
       "
+      aria-label="សិរីមង្គលអាពាហ៍ពិពាហ៍"
     >
       {/* Keep semantic h1 for a11y/SEO */}
       <h1 className="sr-only">សិរីមង្គលអាពាហ៍ពិពាហ៍</h1>
@@ -39,11 +17,27 @@ export default function Heading({ isStoryPlaying = false }) {
           width={1982}
           height={520}
           className="
-            block mx-auto h-auto aspect-[1982/520]
-            w-[400px] sm:w-[240px] md:w-[520px] md:-mt-10 lg:w-[350px]
-            animate-[pop_650ms_cubic-bezier(0.22,1,0.36,1)_both]
-            select-none
+            block mx-auto h-auto aspect-[1982/520] select-none
+            /* Mobile-first fluid */
+            w-[clamp(380px,48vw,560px)] 
+            -mt-[clamp(0px,1.8vw,12px)]
+
+            sm:w-[420px]
+            sm:-mt-[4rem]
+
+            /* Tablet (≥768px): slightly bigger, a bit more lift */
+            md:w-[clamp(520px,45vw,640px)]
+            md:-mt-[clamp(6px,1.2vw,16px)]
+
+            /* Desktop (≥1024px): cap width by viewport, gentle lift */
+            lg:w-[min(52vw,680px)]
+            lg:-mt-[clamp(8px,1vw,20px)]
+
+            /* Large desktop (≥1280px/≥1536px): stabilize size */
+            xl:w-[min(38vw,720px)]
+            2xl:w-[620px]
           "
+          sizes="(max-width: 768px) 48vw, (max-width: 1024px) 45vw, (max-width: 1280px) 42vw, 720px"
           loading="eager"
         />
       )}

@@ -1,12 +1,16 @@
 @import "tailwindcss";
 
 /* Tokens (single source of truth) */
+/* Optional: a fluid vertical rhythm for sections (used above on CoverPage) */
 :root {
+  /* existing */
   --gold: #d2ab59;
   --safe-top: env(safe-area-inset-top, 0px);
-  --pad-top-dynamic: clamp(9svh, 13dvh, 15lvh); 
-  /* --pad-top-dynamic: clamp(5svh, 8dvh, 10lvh); */
+  --pad-top-dynamic: clamp(9svh, 13dvh, 15lvh);
   --pad-top-extra: -30px;
+
+  /* optional new tokens */
+  --section-gap: clamp(16px, 3.5vmin, 32px);
 }
 
 /* iOS Safari phones: small extra top pad */
