@@ -36,7 +36,7 @@ export default function Heading({ isStoryPlaying = false }) {
 
             /* Large desktop (≥1280px/≥1536px): stabilize size */
             xl:w-[min(38vw,720px)]
-            2xl:w-[620px]
+            2xl:w-[550px]
           "
           sizes="(max-width: 768px) 48vw, (max-width: 1024px) 45vw, (max-width: 1280px) 42vw, 720px"
           loading="eager"
