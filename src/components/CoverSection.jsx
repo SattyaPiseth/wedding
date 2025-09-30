@@ -17,7 +17,7 @@ export default function CoverSection({ isStoryPlaying = false, onStart }) {
             <img
               className="
                 block mx-auto h-auto
-                w-4/5 max-w-[300px]
+                w-3/5 max-w-[300px]
                 sm:w-3/4 sm:max-w-[330px]
                 md:max-w-[360px]
                 xl:max-w-[400px]
