@@ -2,8 +2,8 @@
 import { useLocation } from "react-router-dom";
 
 const DEFAULTS = {
-  siteName: "nary-wedding",
-  title: "Nary Wedding — Save the Date",
+  siteName: "kim & nary wedding",
+  title: "Kim & Nary Wedding — Save the Date",
   description:
     "Join us in celebrating love. Ceremony details, schedule, map, and RSVP.",
   image: "/images/landscape-04.jpg", // 1200x630 recommended
