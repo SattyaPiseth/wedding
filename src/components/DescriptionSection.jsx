@@ -1,12 +1,28 @@
 import SoftCard from "./SoftCard";
 import { MasonryGallery } from "./gallery/MasonryGallery";
 import { GALLERY_IMAGES } from "./../data/galleryImages";
+import images from "./../data/images";
 import google_map_icon from "/images/google-maps.png";
 import morning_event_image from "/images/morning-event.png";
 import afternoon_event_image from "/images/afternoon-event.png";
 import Countdown from "./Countdown";
+import GalleryGrid from "./gallery-test/GalleryGrid";
+import { Lightbox } from "./gallery-test/Lightbox";
+import { useState } from "react";
 
 export const DescriptionSection = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [idx, setIdx] = useState(0);
+
+  const open = (i) => {
+    setIdx(i);
+    setIsOpen(true);
+  };
+  const close = () => setIsOpen(false);
+  const prev = () =>
+    setIdx((i) => (i - 1 + GALLERY_IMAGES.length) % GALLERY_IMAGES.length);
+  const next = () => setIdx((i) => (i + 1) % GALLERY_IMAGES.length);
+
   return (
     <section
       lang="km"
@@ -160,7 +176,17 @@ export const DescriptionSection = () => {
           កម្រងរូបភាព
         </h3>
         {/* Gallery */}
-        <MasonryGallery images={GALLERY_IMAGES} />
+        <MasonryGallery images={GALLERY_IMAGES} onOpen={open} />
+        {isOpen && (
+          <Lightbox
+            images={GALLERY_IMAGES}
+            index={idx}
+            onClose={close}
+            onPrev={prev}
+            onNext={next}
+          />
+        )}
+        {/* <GalleryGrid images={images} /> */}
       </SoftCard>
     </section>
   );
