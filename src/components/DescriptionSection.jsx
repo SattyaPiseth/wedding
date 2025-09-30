@@ -84,7 +84,7 @@ export const DescriptionSection = () => {
             ដែលនឹងប្រព្រឹត្តទៅ ចាប់ពីម៉ោង ៥ ល្ងាច
           </p>
           <p className="moul-regular text-[#7a6200] text-sm sm:text-base md:text-lg leading-relaxed md:leading-[1.7]">
-            នៅថ្ងៃអាទិត្យ ទី៣០​ខែវិច្ឆិកា ឆ្នំា ២០២៥
+            នៅថ្ងៃអាទិត្យ ទី៣០​ ខែវិច្ឆិកា ឆ្នំា ២០២៥
           </p>
           <p className="siemreap-regular text-sm sm:text-base md:text-lg leading-normal sm:leading-relaxed md:leading-loose">
             ភោជនីយដ្ឋាន ឡាក់គីប្រាយ
