@@ -89,3 +89,20 @@ body,
     transform: translateY(0);
   }
 }
+
+/* --- Masonry / iOS Safari fixes --- */
+@layer utilities {
+  /* Make column layout stable on iOS (vendor + std props) */
+  .ios-masonry-fix {
+    -webkit-column-break-inside: avoid;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Reserve space before lazy images load (prevents jumps on Safari) */
+  .img-intrinsic {
+    /* pick a typical thumb size; adjust to your images */
+    contain-intrinsic-size: 400px auto;
+  }
+}
+
