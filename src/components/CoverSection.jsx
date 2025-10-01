@@ -48,7 +48,7 @@ export default function CoverSection({ isStoryPlaying = false, onStart }) {
                     text-xl sm:text-2xl lg:text-3xl xl:text-[2rem] 2xl:text-[2.125rem]
                     animate-[fade-up_700ms_ease-out_both]
                     [animation-delay:160ms]
-                    motion-reduce:animate-none mb-[2vh]
+                    motion-reduce:animate-none mb-[2vh] -mt-[3vh]
                   "
                 >
                   សូមគោរពអញ្ជើញ
