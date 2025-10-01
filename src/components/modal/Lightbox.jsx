@@ -119,49 +119,53 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
 
       <div className="relative mx-auto w-full max-w-6xl">
         <figure className="relative w-full h-[min(88dvh,calc(100dvh-2rem))] flex items-center justify-center select-none">
-          <img
-            src={src}
-            alt={alt}
-            className="block max-w-full max-h-full w-auto h-auto object-contain rounded-xl shadow-2xl"
-            draggable={false}
-          />
+  <div className="relative inline-block">
+    <img
+      src={src}
+      alt={alt}
+      className="block max-w-full max-h-full w-auto h-auto object-contain rounded-xl shadow-2xl"
+      draggable={false}
+    />
 
-          {/* <button
-            ref={closeBtnRef}
-            type="button"
-            onClick={onClose}
-            className="absolute top-3 right-3 md:top-4 md:right-4 rounded-full bg-white/10 p-2 text-white backdrop-blur hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
-            aria-label="Close"
-          >
-            <XIcon />
-          </button> */}
+    {/* Close button: top-end of the image box */}
+    <button
+      ref={closeBtnRef}
+      type="button"
+      onClick={onClose}
+      className="absolute top-2 end-2 z-10 rounded-full bg-white/10 p-2 text-white backdrop-blur hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+      aria-label="Close"
+    >
+      <XIcon />
+    </button>
+  </div>
 
-          <button
-            type="button"
-            onClick={onPrev}
-            disabled={count <= 1}
-            className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white backdrop-blur hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-40 disabled:cursor-not-allowed"
-            aria-label="Previous image"
-          >
-            <ChevronLeftIcon />
-          </button>
+  {/* Prev / Next buttons stay centered relative to figure */}
+  <button
+    type="button"
+    onClick={onPrev}
+    disabled={count <= 1}
+    className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white backdrop-blur hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-40 disabled:cursor-not-allowed"
+    aria-label="Previous image"
+  >
+    <ChevronLeftIcon />
+  </button>
 
-          <button
-            type="button"
-            onClick={onNext}
-            disabled={count <= 1}
-            className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white backdrop-blur hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-40 disabled:cursor-not-allowed"
-            aria-label="Next image"
-          >
-            <ChevronRightIcon />
-          </button>
+  <button
+    type="button"
+    onClick={onNext}
+    disabled={count <= 1}
+    className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white backdrop-blur hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-40 disabled:cursor-not-allowed"
+    aria-label="Next image"
+  >
+    <ChevronRightIcon />
+  </button>
 
-          <figcaption
-            id={descId}
-            className="absolute -bottom-10 left-1/2 -translate-x-1/2 mt-3 text-center text-sm text-neutral-200"
-          >
-            Image {index + 1} <span className="opacity-60">• {index + 1}/{count}</span>
-          </figcaption>
+  <figcaption
+    id={descId}
+    className="absolute -bottom-10 left-1/2 -translate-x-1/2 mt-3 text-center text-sm text-neutral-200"
+  >
+    Image {index + 1} <span className="opacity-60">• {index + 1}/{count}</span>
+  </figcaption>
         </figure>
       </div>
     </div>
