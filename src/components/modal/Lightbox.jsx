@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useId, useLayoutEffect } from "react";
+import React, { useEffect, useRef, useId, useLayoutEffect, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "./Icons.jsx";
 
@@ -37,18 +37,39 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
   const { src, alt } = useImageSrc(images, index);
 
   const backdropRef = useRef(null);
+  const imgRef = useRef(null);
   const closeBtnRef = useRef(null);
 
   const headingId = useId();
   const descId = useId();
 
+  const [isPortrait, setIsPortrait] = useState(false);
+
   // Lock background scroll while open
   useScrollLock(true);
 
-  // Focus close button on mount
+  // Ensure the focus trap actually traps: focus the backdrop
   useEffect(() => {
-    closeBtnRef.current?.focus();
+    backdropRef.current?.focus();
   }, []);
+
+  // Determine orientation when the image loads or src changes
+  const handleImageReady = useCallback(() => {
+    const el = imgRef.current;
+    if (!el) return;
+    // If already loaded from cache, natural sizes are ready
+    const w = el.naturalWidth;
+    const h = el.naturalHeight;
+    if (w && h) setIsPortrait(h > w);
+  }, []);
+
+  useEffect(() => {
+    // Re-evaluate when the source changes
+    setIsPortrait(false);
+    // If the image might already be cached, run a microtask to read natural dims
+    const t = requestAnimationFrame(() => handleImageReady());
+    return () => cancelAnimationFrame(t);
+  }, [src, handleImageReady]);
 
   // Global key handlers for reliability
   useEffect(() => {
@@ -117,13 +138,38 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
     >
       <h2 id={headingId} className="sr-only">Image viewer</h2>
 
-      <div className="relative mx-auto w-full max-w-6xl">
-        <figure className="relative w-full h-[min(88dvh,calc(100dvh-2rem))] flex items-center justify-center select-none">
+      {/* Fluid wrapper; slightly narrower on portrait for nicer balance */}
+      <div
+        className={[
+          "relative mx-auto w-full",
+          isPortrait
+            ? "max-w-[min(94vw,820px)] sm:max-w-[min(92vw,900px)] md:max-w-[min(88vw,980px)]"
+            : "max-w-[min(96vw,1200px)] sm:max-w-[min(94vw,1280px)] md:max-w-[min(92vw,1440px)]",
+        ].join(" ")}
+      >
+        {/* Height pinned to viewport; a touch more headroom for portrait */}
+        <figure
+          className={[
+            "relative w-full flex items-center justify-center select-none",
+            isPortrait
+              ? "h-[min(92svh,calc(100dvh-2.25rem))] sm:h-[min(94svh,calc(100dvh-2.5rem))]"
+              : "h-[min(88svh,calc(100dvh-2rem))] sm:h-[min(90svh,calc(100dvh-2.5rem))]",
+          ].join(" ")}
+        >
           <div className="relative inline-block">
             <img
+              ref={imgRef}
               src={src}
               alt={alt}
-              className="block max-w-full max-h-full w-auto h-auto object-contain rounded-xl shadow-2xl"
+              onLoad={handleImageReady}
+              className={[
+                "block object-contain rounded-xl shadow-2xl",
+                // Keep intrinsic aspect; only bound by the figure box
+                // Portrait gets taller (max-h) but slightly narrower (max-w) to feel consistent
+                isPortrait
+                  ? "max-h-[88svh] sm:max-h-[90svh] md:max-h-[92svh] max-w-[82vw] sm:max-w-[78vw] md:max-w-[72vw] w-auto h-auto"
+                  : "max-h-[82svh] sm:max-h-[86svh] md:max-h-[88svh] max-w-[94vw] sm:max-w-[92vw] md:max-w-[90vw] w-auto h-auto",
+              ].join(" ")}
               draggable={false}
             />
 
@@ -132,19 +178,29 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
               ref={closeBtnRef}
               type="button"
               onClick={onClose}
-              className="absolute top-2 end-2 z-10 rounded-full bg-white/10 p-2 text-white backdrop-blur hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+              className="absolute top-2 end-2 z-10 rounded-full
+                         bg-white/10 text-white backdrop-blur
+                         p-2 sm:p-2.5 md:p-3
+                         hover:bg-white/20
+                         focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
               aria-label="Close"
             >
               <XIcon />
             </button>
           </div>
 
-          {/* Prev / Next buttons stay centered relative to figure */}
+          {/* Prev / Next buttons (slightly adjusted offsets on portrait) */}
           <button
             type="button"
             onClick={onPrev}
             disabled={count <= 1}
-            className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white backdrop-blur hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-40 disabled:cursor-not-allowed"
+            className={[
+              "absolute top-1/2 -translate-y-1/2 rounded-full bg-white/10 text-white backdrop-blur",
+              "hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
+              "disabled:opacity-40 disabled:cursor-not-allowed",
+              "p-2.5 sm:p-3 md:p-3",
+              isPortrait ? "left-1.5 sm:left-2 md:left-3" : "left-2 sm:left-3 md:left-4",
+            ].join(" ")}
             aria-label="Previous image"
           >
             <ChevronLeftIcon />
@@ -154,23 +210,34 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
             type="button"
             onClick={onNext}
             disabled={count <= 1}
-            className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white backdrop-blur hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-40 disabled:cursor-not-allowed"
+            className={[
+              "absolute top-1/2 -translate-y-1/2 rounded-full bg-white/10 text-white backdrop-blur",
+              "hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
+              "disabled:opacity-40 disabled:cursor-not-allowed",
+              "p-2.5 sm:p-3 md:p-3",
+              isPortrait ? "right-1.5 sm:right-2 md:right-3" : "right-2 sm:right-3 md:right-4",
+            ].join(" ")}
             aria-label="Next image"
           >
             <ChevronRightIcon />
           </button>
 
+          {/* Caption: a bit taller on portrait to avoid crowding */}
           <figcaption
             id={descId}
-            className="absolute -bottom-10 left-1/2 -translate-x-1/2 mt-3 text-center text-sm text-neutral-200 py-5"
+            className={[
+              "pointer-events-none absolute inset-x-0 bottom-0 text-center text-neutral-100",
+              "bg-gradient-to-t from-black/45 via-black/15 to-transparent",
+              isPortrait ? "text-sm sm:text-base px-3 py-3 sm:px-4 sm:py-3.5"
+                         : "text-xs sm:text-sm md:text-base px-3 py-2 sm:px-4 sm:py-2.5",
+            ].join(" ")}
           >
-            Image {index + 1} <span className="opacity-60">• {index + 1}/{count}</span>
+            Image {index + 1} <span className="opacity-70">• {index + 1}/{count}</span>
           </figcaption>
         </figure>
       </div>
     </div>
   );
 
-  // Render at body level to avoid ancestor transforms affecting fixed positioning
   return createPortal(node, document.body);
 };
