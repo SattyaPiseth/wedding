@@ -31,7 +31,7 @@ export function MasonryImage({ src, alt, index, effect = "fade-up", onOpen, widt
       onClick={() => onOpen?.(index)}
       onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onOpen?.(index)}
       className="ios-masonry-fix mb-4 block w-full rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-      data-aos="fade"               // prefer opacity-only in columns
+      data-aos={effect}               // prefer opacity-only in columns
       data-aos-delay={index * 80}
       aria-label={`Open ${alt}`}
     >
