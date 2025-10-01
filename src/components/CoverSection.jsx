@@ -84,7 +84,7 @@ export default function CoverSection({ isStoryPlaying = false, onStart }) {
                 "
                 aria-label="Join the program"
               >
-                សូមចុចដើម្បីបើកធៀប
+                សូមចុចបើកធៀប
               </button>
 
             </div>
