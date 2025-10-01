@@ -12,7 +12,7 @@ import { MasonryImage } from "./MasonryImage";
 
 export function MasonryGallery({ images, onOpen }) {
   return (
-    <section className="columns-2 gap-x-4 md:columns-3 lg:columns-4">
+    <section className="columns-2 gap-x-4 md:columns-4">
       {images.map((src, i) => (
         <MasonryImage
           key={src}
