@@ -33,12 +33,19 @@ function useScrollLock(locked) {
 function useImageSrc(images, index) {
   const item = images[index];
   if (!item) return { src: "", alt: "" };
-  if (typeof item === "string") return { src: item, alt: `Gallery image ${index + 1}` };
+  if (typeof item === "string")
+    return { src: item, alt: `Gallery image ${index + 1}` };
   const { src, alt } = item;
   return { src, alt: alt ?? `Gallery image ${index + 1}` };
 }
 
-export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) => {
+export const Lightbox = ({
+  images = [],
+  index = 0,
+  onClose,
+  onPrev,
+  onNext,
+}) => {
   const count = images.length;
   if (!count) return null;
 
@@ -173,9 +180,9 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
   // Direction-aware variants
   const variants = {
     enter: (d) => ({
-      x: d * 40,         // from right if next, from left if prev
+      x: d * 40, // from right if next, from left if prev
       opacity: 0.0,
-      scale: 0.995,      // tiny scale helps reduce “pop”
+      scale: 0.995, // tiny scale helps reduce “pop”
     }),
     center: {
       x: 0,
@@ -183,7 +190,7 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
       scale: 1,
     },
     exit: (d) => ({
-      x: -d * 40,        // to the opposite side
+      x: -d * 40, // to the opposite side
       opacity: 0.0,
       scale: 0.995,
     }),
@@ -214,7 +221,9 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
         if (e.target === e.currentTarget) onClose?.();
       }}
     >
-      <h2 id={headingId} className="sr-only">Image viewer</h2>
+      <h2 id={headingId} className="sr-only">
+        Image viewer
+      </h2>
 
       {/* Fluid wrapper; slightly narrower on portrait for nicer balance */}
       <div
@@ -242,14 +251,20 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
             onDragEnd={(_, info) => {
               if (busy) return; // respect debounce
               if (info.offset.x > swipeThreshold) {
-                dirRef.current = -1; safePrev();
+                dirRef.current = -1;
+                safePrev();
               } else if (info.offset.x < -swipeThreshold) {
-                dirRef.current = 1; safeNext();
+                dirRef.current = 1;
+                safeNext();
               }
             }}
             className="relative inline-block will-change-transform"
           >
-            <AnimatePresence initial={false} custom={dirRef.current} mode="wait">
+            <AnimatePresence
+              initial={false}
+              custom={dirRef.current}
+              mode="wait"
+            >
               <motion.img
                 key={src} // re-mount on src change
                 ref={imgRef}
@@ -283,10 +298,11 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
               type="button"
               onClick={onClose}
               className="absolute top-2 end-2 z-10 rounded-full
-                         bg-white/10 text-white backdrop-blur
-                         p-2 sm:p-2.5 md:p-3
-                         hover:bg-white/20
-                         focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+             bg-black/40 text-white backdrop-blur-md
+             p-2 sm:p-2.5 md:p-3
+             shadow-lg shadow-black/30
+             hover:bg-black/50
+             focus:outline-none focus-visible:ring-2"
               aria-label="Close"
             >
               <XIcon />
@@ -303,7 +319,9 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
               "hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
               "disabled:opacity-40 disabled:cursor-not-allowed",
               "p-2.5 sm:p-3 md:p-3",
-              isPortrait ? "left-1.5 sm:left-2 md:left-3" : "left-2 sm:left-3 md:left-4",
+              isPortrait
+                ? "left-1.5 sm:left-2 md:left-3"
+                : "left-2 sm:left-3 md:left-4",
             ].join(" ")}
             aria-label="Previous image"
           >
@@ -319,7 +337,9 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
               "hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
               "disabled:opacity-40 disabled:cursor-not-allowed",
               "p-2.5 sm:p-3 md:p-3",
-              isPortrait ? "right-1.5 sm:right-2 md:right-3" : "right-2 sm:right-3 md:right-4",
+              isPortrait
+                ? "right-1.5 sm:right-2 md:right-3"
+                : "right-2 sm:right-3 md:right-4",
             ].join(" ")}
             aria-label="Next image"
           >
@@ -337,7 +357,10 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
                 : "text-xs sm:text-sm md:text-base px-3 py-2 sm:px-4 sm:py-2.5",
             ].join(" ")}
           >
-            Image {index + 1} <span className="opacity-70">• {index + 1}/{count}</span>
+            Image {index + 1}{" "}
+            <span className="opacity-70">
+              • {index + 1}/{count}
+            </span>
           </figcaption>
         </figure>
       </div>
