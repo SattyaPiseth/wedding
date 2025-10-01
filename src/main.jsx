@@ -9,6 +9,8 @@ import CoverPage from "./pages/CoverPage.jsx";
 import { HomePage } from "./pages/HomePage.jsx";
 import CustomerName from "./components/customer/CustomerName.jsx";
 
+import { SpeedInsights } from "@vercel/speed-insights/react"
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -28,5 +30,6 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <RouterProvider router={router} />
+    <SpeedInsights />
   </StrictMode>
 );
