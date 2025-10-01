@@ -152,7 +152,7 @@ export const DescriptionSection = () => {
         </h3>
         {/* Gallery */}
         <MasonryGallery images={GALLERY_IMAGES} onOpen={open} />
-        {/* {isOpen && (
+        {isOpen && (
           <Lightbox
             images={GALLERY_IMAGES}
             index={idx}
@@ -160,7 +160,7 @@ export const DescriptionSection = () => {
             onPrev={prev}
             onNext={next}
           />
-        )} */}
+        )}
       </SoftCard>
     </section>
   );
