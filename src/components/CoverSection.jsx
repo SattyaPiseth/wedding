@@ -17,7 +17,7 @@ export default function CoverSection({ isStoryPlaying = false, onStart }) {
     >
       {!isStoryPlaying && (
         <>
-          <div className="flex flex-col items-center gap-y-[10vh] sm:gap-y-[10vh] lg:gap-y-[12vh]">
+          <div className="flex flex-col items-center gap-y-[5vh] sm:gap-y-[10vh] lg:gap-y-[12vh]">
             {/* Cover mark */}
             <img
               className="
