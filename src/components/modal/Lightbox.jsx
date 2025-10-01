@@ -1,6 +1,14 @@
-import React, { useEffect, useRef, useId, useLayoutEffect, useState, useCallback } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useId,
+  useLayoutEffect,
+  useState,
+  useCallback,
+} from "react";
 import { createPortal } from "react-dom";
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "./Icons.jsx";
+import { AnimatePresence, motion } from "framer-motion";
 
 /** Lock scroll on open with scrollbar compensation */
 function useScrollLock(locked) {
@@ -43,7 +51,42 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
   const headingId = useId();
   const descId = useId();
 
+  // Orientation detection
   const [isPortrait, setIsPortrait] = useState(false);
+  const handleImageReady = useCallback(() => {
+    const el = imgRef.current;
+    if (!el) return;
+    const w = el.naturalWidth;
+    const h = el.naturalHeight;
+    if (w && h) setIsPortrait(h > w);
+  }, []);
+  useEffect(() => {
+    setIsPortrait(false);
+    const t = requestAnimationFrame(handleImageReady);
+    return () => cancelAnimationFrame(t);
+  }, [src, handleImageReady]);
+
+  // Direction of travel: -1 prev, +1 next
+  const dirRef = useRef(0);
+
+  // Debounce to prevent spam clicking during transition
+  const [busy, setBusy] = useState(false);
+  const transitionMs = 280; // keep in sync with 'transition' below
+
+  const safePrev = () => {
+    if (busy) return;
+    setBusy(true);
+    dirRef.current = -1;
+    onPrev?.();
+    setTimeout(() => setBusy(false), transitionMs);
+  };
+  const safeNext = () => {
+    if (busy) return;
+    setBusy(true);
+    dirRef.current = 1;
+    onNext?.();
+    setTimeout(() => setBusy(false), transitionMs);
+  };
 
   // Lock background scroll while open
   useScrollLock(true);
@@ -53,25 +96,28 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
     backdropRef.current?.focus();
   }, []);
 
-  // Determine orientation when the image loads or src changes
-  const handleImageReady = useCallback(() => {
-    const el = imgRef.current;
-    if (!el) return;
-    // If already loaded from cache, natural sizes are ready
-    const w = el.naturalWidth;
-    const h = el.naturalHeight;
-    if (w && h) setIsPortrait(h > w);
-  }, []);
-
+  // Preload neighbor images for smoother transitions
   useEffect(() => {
-    // Re-evaluate when the source changes
-    setIsPortrait(false);
-    // If the image might already be cached, run a microtask to read natural dims
-    const t = requestAnimationFrame(() => handleImageReady());
-    return () => cancelAnimationFrame(t);
-  }, [src, handleImageReady]);
+    const preload = (url) => {
+      if (!url) return;
+      const img = new Image();
+      img.decoding = "async";
+      img.loading = "eager";
+      img.src = url;
+    };
 
-  // Global key handlers for reliability
+    if (!count) return;
+
+    const nextIdx = (index + 1) % count;
+    const prevIdx = (index - 1 + count) % count;
+
+    const getSrc = (item) => (typeof item === "string" ? item : item?.src);
+
+    preload(getSrc(images[nextIdx]));
+    preload(getSrc(images[prevIdx]));
+  }, [index, images, count]);
+
+  // Global key handlers with direction
   useEffect(() => {
     const onKeyDown = (e) => {
       const { key } = e;
@@ -80,17 +126,17 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
         onClose?.();
       } else if (key === "ArrowLeft") {
         e.preventDefault();
-        onPrev?.();
+        safePrev();
       } else if (key === "ArrowRight") {
         e.preventDefault();
-        onNext?.();
+        safeNext();
       }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [onClose, onPrev, onNext]);
+  }, [onClose]); // safePrev/safeNext are stable enough for this scope
 
-  // Simple focus trap within the lightbox
+  // Simple focus trap
   useEffect(() => {
     const trap = (e) => {
       if (e.key !== "Tab") return;
@@ -118,6 +164,38 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
     current?.addEventListener("keydown", trap);
     return () => current?.removeEventListener("keydown", trap);
   }, []);
+
+  // Reduced motion?
+  const reduceMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+
+  // Direction-aware variants
+  const variants = {
+    enter: (d) => ({
+      x: d * 40,         // from right if next, from left if prev
+      opacity: 0.0,
+      scale: 0.995,      // tiny scale helps reduce “pop”
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      scale: 1,
+    },
+    exit: (d) => ({
+      x: -d * 40,        // to the opposite side
+      opacity: 0.0,
+      scale: 0.995,
+    }),
+  };
+
+  // Transition tuned for “buttery”
+  const transition = reduceMotion
+    ? { duration: 0 }
+    : { duration: 0.28, ease: [0.22, 0.61, 0.36, 1] };
+
+  // Swipe gesture threshold (px)
+  const swipeThreshold = 80;
 
   const node = (
     <div
@@ -156,22 +234,48 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
               : "h-[min(88svh,calc(100dvh-2rem))] sm:h-[min(90svh,calc(100dvh-2.5rem))]",
           ].join(" ")}
         >
-          <div className="relative inline-block">
-            <img
-              ref={imgRef}
-              src={src}
-              alt={alt}
-              onLoad={handleImageReady}
-              className={[
-                "block object-contain rounded-xl shadow-2xl",
-                // Keep intrinsic aspect; only bound by the figure box
-                // Portrait gets taller (max-h) but slightly narrower (max-w) to feel consistent
-                isPortrait
-                  ? "max-h-[88svh] sm:max-h-[90svh] md:max-h-[92svh] max-w-[82vw] sm:max-w-[78vw] md:max-w-[72vw] w-auto h-auto"
-                  : "max-h-[82svh] sm:max-h-[86svh] md:max-h-[88svh] max-w-[94vw] sm:max-w-[92vw] md:max-w-[90vw] w-auto h-auto",
-              ].join(" ")}
-              draggable={false}
-            />
+          {/* Swipe wrapper */}
+          <motion.div
+            drag={reduceMotion ? false : "x"}
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.12}
+            onDragEnd={(_, info) => {
+              if (busy) return; // respect debounce
+              if (info.offset.x > swipeThreshold) {
+                dirRef.current = -1; safePrev();
+              } else if (info.offset.x < -swipeThreshold) {
+                dirRef.current = 1; safeNext();
+              }
+            }}
+            className="relative inline-block will-change-transform"
+          >
+            <AnimatePresence initial={false} custom={dirRef.current} mode="wait">
+              <motion.img
+                key={src} // re-mount on src change
+                ref={imgRef}
+                src={src}
+                alt={alt}
+                onLoad={handleImageReady}
+                custom={dirRef.current}
+                variants={variants}
+                initial={reduceMotion ? false : "enter"}
+                animate="center"
+                exit={reduceMotion ? false : "exit"}
+                transition={transition}
+                className={[
+                  "block object-contain rounded-xl shadow-2xl select-none",
+                  isPortrait
+                    ? "max-h-[88svh] sm:max-h-[90svh] md:max-h-[92svh] max-w-[82vw] sm:max-w-[78vw] md:max-w-[72vw] w-auto h-auto"
+                    : "max-h-[82svh] sm:max-h-[86svh] md:max-h-[88svh] max-w-[94vw] sm:max-w-[92vw] md:max-w-[90vw] w-auto h-auto",
+                ].join(" ")}
+                draggable={false}
+                style={{
+                  backfaceVisibility: "hidden",
+                  WebkitFontSmoothing: "antialiased",
+                  willChange: reduceMotion ? undefined : "transform, opacity",
+                }}
+              />
+            </AnimatePresence>
 
             {/* Close button: top-end of the image box */}
             <button
@@ -187,13 +291,13 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
             >
               <XIcon />
             </button>
-          </div>
+          </motion.div>
 
-          {/* Prev / Next buttons (slightly adjusted offsets on portrait) */}
+          {/* Prev / Next buttons */}
           <button
             type="button"
-            onClick={onPrev}
-            disabled={count <= 1}
+            onClick={safePrev}
+            disabled={count <= 1 || busy}
             className={[
               "absolute top-1/2 -translate-y-1/2 rounded-full bg-white/10 text-white backdrop-blur",
               "hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
@@ -208,8 +312,8 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
 
           <button
             type="button"
-            onClick={onNext}
-            disabled={count <= 1}
+            onClick={safeNext}
+            disabled={count <= 1 || busy}
             className={[
               "absolute top-1/2 -translate-y-1/2 rounded-full bg-white/10 text-white backdrop-blur",
               "hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
@@ -222,14 +326,15 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
             <ChevronRightIcon />
           </button>
 
-          {/* Caption: a bit taller on portrait to avoid crowding */}
+          {/* Caption with gradient */}
           <figcaption
             id={descId}
             className={[
               "pointer-events-none absolute inset-x-0 bottom-0 text-center text-neutral-100",
               "bg-gradient-to-t from-black/45 via-black/15 to-transparent",
-              isPortrait ? "text-sm sm:text-base px-3 py-3 sm:px-4 sm:py-3.5"
-                         : "text-xs sm:text-sm md:text-base px-3 py-2 sm:px-4 sm:py-2.5",
+              isPortrait
+                ? "text-sm sm:text-base px-3 py-3 sm:px-4 sm:py-3.5"
+                : "text-xs sm:text-sm md:text-base px-3 py-2 sm:px-4 sm:py-2.5",
             ].join(" ")}
           >
             Image {index + 1} <span className="opacity-70">• {index + 1}/{count}</span>
