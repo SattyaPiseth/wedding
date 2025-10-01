@@ -70,31 +70,6 @@ export const DescriptionSection = () => {
         </section>
 
         {/* EventMeta */}
-        {/* <section className="flex flex-col gap-3 sm:gap-4 md:gap-5 leading-loose">
-          <p className="siemreap-regular text-sm sm:text-base md:text-lg leading-normal sm:leading-relaxed md:leading-loose">
-            ដែលនឹងប្រព្រឹត្តទៅ ចាប់ពីម៉ោង ៥ ល្ងាច
-          </p>
-          <p className="moul-regular text-[#7a6200] text-sm sm:text-base md:text-lg leading-relaxed md:leading-[1.7]">
-            នៅថ្ងៃអាទិត្យ ទី៣០​ខែវិច្ឆិកា ឆ្នំា ២០២៥
-          </p>
-          <p className="siemreap-regular text-sm sm:text-base md:text-lg leading-normal sm:leading-relaxed md:leading-loose">
-            ភោជនីយដ្ឋាន ឡាក់គីប្រាយ
-          </p>
-          <a
-            href="https://maps.app.goo.gl/usZXcfNpkuQMZxr27"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-1 m-2 p-3 moul-regular text-[#7a6200] tracking-wide hover:scale-105 hover:text-[#a07d00] transition-transform cursor-pointer"
-          >
-            <img
-              className="w-7 h-auto sm:w-8"
-              src={google_map_icon}
-              loading="lazy"
-              alt="location"
-            />
-            <span className="text-sm hover:underline pt-2">បើកមើលទីតាំង</span>
-          </a>
-        </section> */}
         <section className="flex flex-col gap-3 sm:gap-4 md:gap-5 leading-loose">
           <p className="siemreap-regular text-sm sm:text-base md:text-lg leading-normal sm:leading-relaxed md:leading-loose">
             ដែលនឹងប្រព្រឹត្តទៅ ចាប់ពីម៉ោង ៥ ល្ងាច
@@ -177,7 +152,7 @@ export const DescriptionSection = () => {
         </h3>
         {/* Gallery */}
         <MasonryGallery images={GALLERY_IMAGES} onOpen={open} />
-        {isOpen && (
+        {/* {isOpen && (
           <Lightbox
             images={GALLERY_IMAGES}
             index={idx}
@@ -185,8 +160,7 @@ export const DescriptionSection = () => {
             onPrev={prev}
             onNext={next}
           />
-        )}
-        {/* <GalleryGrid images={images} /> */}
+        )} */}
       </SoftCard>
     </section>
   );
