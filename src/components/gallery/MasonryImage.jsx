@@ -23,7 +23,7 @@ export function MasonryImage({ src, alt, index, effect = "fade-up", onOpen }) {
       className="mb-4 block w-full break-inside-avoid rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
       aria-label={`Open ${alt}`}
       data-aos={effect}
-      // data-aos-delay={index * 80}
+      data-aos-delay={index * 80}
     >
       <img
         src={src}
