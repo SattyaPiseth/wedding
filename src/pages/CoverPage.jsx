@@ -1,10 +1,12 @@
-import { useOutletContext } from "react-router-dom";
+// pages/CoverPage.jsx
+import {useOutletContext } from "react-router-dom";
 import Heading from "../components/Heading.jsx";
 import CoverSection from "../components/CoverSection.jsx";
 
 export default function CoverPage() {
   const { mode, startStory } = useOutletContext();
   const isStoryPlaying = mode === "story";
+  // const { isValidInvite, customer } = useLoaderData();
 
   return (
     <div
@@ -18,7 +20,7 @@ export default function CoverPage() {
       data-aos="zoom-in"
     >
       <Heading isStoryPlaying={isStoryPlaying} />
-    
+      {/* You can pass customer if you want; not required since your inline component reads from the hook */}
       <CoverSection isStoryPlaying={isStoryPlaying} onStart={startStory} />
       {/* <div className="h-2 bg-yellow-500 sm:bg-green-400 md:bg-rose-200 lg:bg-red-700 xl:bg-cyan-600 2xl:bg-black" /> */}
     </div>
