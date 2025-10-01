@@ -162,7 +162,7 @@ export const Lightbox = ({ images = [], index = 0, onClose, onPrev, onNext }) =>
 
           <figcaption
             id={descId}
-            className="absolute -bottom-10 left-1/2 -translate-x-1/2 mt-3 text-center text-sm text-neutral-200 p-5"
+            className="absolute -bottom-10 left-1/2 -translate-x-1/2 mt-3 text-center text-sm text-neutral-200"
           >
             Image {index + 1} <span className="opacity-60">• {index + 1}/{count}</span>
           </figcaption>
