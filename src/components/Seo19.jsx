@@ -1,4 +1,3 @@
-// src/components/Seo19.jsx
 import { useLocation } from "react-router-dom";
 
 const DEFAULTS = {
@@ -9,6 +8,8 @@ const DEFAULTS = {
   themeColor: "#ffffff",
   ogType: "website",
   twitterCard: "summary_large_image",
+  locale: "km_KH",
+  imageAlt: "Kim & Nary wedding cover",
 };
 
 const RAW_BASE_URL = import.meta.env.VITE_SITE_URL || "http://localhost:5173";
@@ -27,7 +28,7 @@ const normalizeCanonical = (url) => {
     const u = new URL(url);
     u.search = "";
     u.hash = "";
-    return u.href;
+    return u.href.replace(/\/+$/, "");
   } catch {
     return url;
   }
@@ -38,6 +39,9 @@ export default function Seo19({
   title,
   description,
   image = DEFAULTS.image,
+  imageAlt = DEFAULTS.imageAlt,
+  imageWidth,
+  imageHeight,
   canonical,
 
   // indexing flags
@@ -50,13 +54,23 @@ export default function Seo19({
   ogType = DEFAULTS.ogType,
   themeColor = DEFAULTS.themeColor,
   twitterCard = DEFAULTS.twitterCard,
+  locale = DEFAULTS.locale,
+  siteName = DEFAULTS.siteName,
 
   // JSON-LD: object or array
   jsonLd,
 
-  // optional path override & site name
+  // path override
   path,
-  siteName = DEFAULTS.siteName,
+
+  // social extras
+  twitterSite,
+  ogLocaleAlternates = [],
+
+  // 🔹 NEW: crawler-specific + freshness
+  googleBot,   // e.g., "noindex, nofollow, noarchive"
+  bingBot,     // same
+  updatedTime, // ISO 8601
 
   children,
 }) {
@@ -66,7 +80,9 @@ export default function Seo19({
   const pageUrl = normalizeCanonical(canonical || absUrl(currentPath));
   const pageTitle = title ? `${title} • ${siteName}` : DEFAULTS.title;
   const pageDesc = description || DEFAULTS.description;
+
   const imageUrl = absUrl(image);
+  const imageSecureUrl = imageUrl.replace(/^http:\/\//i, "https://");
 
   const robots = [
     noindex ? "noindex,nofollow" : "index,follow",
@@ -84,22 +100,42 @@ export default function Seo19({
       <title>{pageTitle}</title>
       <meta name="description" content={pageDesc} />
       <meta name="robots" content={robots} />
+      {googleBot && <meta name="googlebot" content={googleBot} />}
+      {bingBot && <meta name="bingbot" content={bingBot} />}
 
       {/* Canonical */}
       <link rel="canonical" href={pageUrl} />
 
-      {/* Open Graph essentials */}
+      {/* Open Graph */}
       <meta property="og:type" content={ogType} />
       <meta property="og:title" content={pageTitle} />
       <meta property="og:description" content={pageDesc} />
       <meta property="og:url" content={pageUrl} />
       <meta property="og:image" content={imageUrl} />
+      <meta property="og:image:secure_url" content={imageSecureUrl} />
+      <meta property="og:image:alt" content={imageAlt} />
+      {imageWidth && <meta property="og:image:width" content={String(imageWidth)} />}
+      {imageHeight && <meta property="og:image:height" content={String(imageHeight)} />}
+      <meta property="og:site_name" content={siteName} />
+      <meta property="og:locale" content={locale} />
+      {ogLocaleAlternates.map((l) => (
+        <meta key={l} property="og:locale:alternate" content={l} />
+      ))}
+      {updatedTime && <meta property="og:updated_time" content={updatedTime} />}
 
-      {/* Twitter (reuse OG values) */}
+      {/* Twitter */}
       <meta name="twitter:card" content={twitterCard} />
+      {twitterSite && <meta name="twitter:site" content={twitterSite} />}
+      <meta name="twitter:title" content={pageTitle} />
+      <meta name="twitter:description" content={pageDesc} />
+      <meta name="twitter:image" content={imageUrl} />
+      <meta name="twitter:image:alt" content={imageAlt} />
 
       {/* Theme */}
       {themeColor && <meta name="theme-color" content={themeColor} />}
+
+      {/* Optional UX meta */}
+      <meta name="format-detection" content="telephone=no" />
 
       {/* JSON-LD */}
       {jsonLd &&
