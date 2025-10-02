@@ -2,8 +2,8 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import App from "./App.jsx"; // Root layout
+import { createBrowserRouter, RouterProvider, ScrollRestoration } from "react-router-dom";
+import App from "./App.jsx";
 import ErrorPage from "./routes/ErrorPage.jsx";
 import CoverPage from "./pages/CoverPage.jsx";
 import { HomePage } from "./pages/HomePage.jsx";
@@ -14,13 +14,18 @@ import { coverLoader } from "./routes/loaders.js";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: (
+      <>
+        <ScrollRestoration />
+        <App />
+      </>
+    ),
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <CoverPage />, loader: coverLoader },
       { path: "home", element: <HomePage /> },
       { path: ":uuid", element: <CoverPage />, loader: coverLoader },
-      { path: "*", element: <ErrorPage /> }, // optional hardening
+      { path: "*", element: <ErrorPage /> },
     ],
   },
 ]);
