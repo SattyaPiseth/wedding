@@ -11,7 +11,7 @@ export const GratitudeSection = () => {
         >
           <h3
             id="gratitude-title"
-            className="moul-regular text-[#7a6200] text-lg sm:text-2xl tracking-wide text-center text-balance"
+            className="moul-regular text-[#7a6200] text-base sm:text-xl tracking-wide text-center text-balance"
           >
             សេចក្ដីថ្លែងអំណរគុណ និង សូមអភ័យទោស
           </h3>
