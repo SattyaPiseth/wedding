@@ -40,7 +40,7 @@ export default function DescriptionSection({
     <section
       lang="km"
       aria-labelledby="invite-title"
-      className="mx-auto max-w-2xl sm:px-12 sm:py-8 md:px-28 lg:px-32"
+      className="mx-auto max-w-2xl px-2 sm:px-12 sm:py-8 md:px-28 lg:px-32"
     >
       <SoftCard>
         {/* Invite Heading */}
