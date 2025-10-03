@@ -1,17 +1,21 @@
+
 export default function PlayMusic({
   allowAudio,
   setAllowAudio,
   muted,
   setMuted,
-  onEnableAudio, // optional helper to unlock + play immediately
+  onEnableAudio, // optional: unlock + start playing in one click
 }) {
   const togglePlay = async () => {
     if (!allowAudio) {
-      if (onEnableAudio) await onEnableAudio(); // single click: unlock + play
-      else setAllowAudio(true);
-    } else {
-      setMuted((m) => !m);
+      if (onEnableAudio) {
+        await onEnableAudio(); // single click: unlock + play
+      } else {
+        setAllowAudio(true);
+      }
+      return;
     }
+    setMuted((m) => !m);
   };
 
   const ariaLabel = !allowAudio
@@ -20,18 +24,22 @@ export default function PlayMusic({
     ? "Unmute background music"
     : "Mute background music";
 
-  // for screen readers to announce changes
+  // Screen reader announcement text
   const liveText = !allowAudio ? "Play Music" : muted ? "Muted" : "Unmuted";
 
   return (
     <button
       type="button"
       onClick={togglePlay}
-      className="fixed bottom-4 right-4 z-30 inline-flex items-center justify-center
-                 h-11 w-11 rounded-xl px-0
-                 bg-black/15 hover:bg-black/25 backdrop-blur
-                 text-white shadow-sm
-                 focus:outline-none focus:ring-2 focus:ring-white/50"
+      className="
+        fixed bottom-4 right-4 z-30 inline-flex items-center justify-center
+        h-11 w-11 rounded-xl px-0
+        bg-black/20 hover:bg-black/30 backdrop-blur
+        text-white shadow-sm
+        focus:outline-none focus:ring-2 focus:ring-white/60
+        transition-transform duration-150 ease-out active:scale-95
+        motion-reduce:transition-none
+      "
       aria-pressed={allowAudio && !muted}
       aria-label={ariaLabel}
       title={ariaLabel}

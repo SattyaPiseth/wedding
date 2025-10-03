@@ -1,9 +1,9 @@
-export default function Overlay() {
-  return (
-    <div
-      className="fixed inset-0 z-[1]
-        bg-black/4 sm:bg-black/5 md:bg-black/6 lg:bg-black/7
-    "
-    />
-  );
+export function Overlay() {
+return (
+  <div
+  className="fixed inset-0 z-[1] pointer-events-none bg-black/5 sm:bg-black/6 md:bg-black/7 lg:bg-black/8"
+  aria-hidden="true"
+  />
+);
 }
+export default Overlay;

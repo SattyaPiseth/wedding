@@ -351,7 +351,7 @@ export const Lightbox = ({
             id={descId}
             className={[
               "pointer-events-none absolute inset-x-0 bottom-0 text-center text-neutral-100",
-              "bg-gradient-to-t from-black/45 via-black/15 to-transparent",
+              
               isPortrait
                 ? "text-sm sm:text-base px-3 py-3 sm:px-4 sm:py-3.5"
                 : "text-xs sm:text-sm md:text-base px-3 py-2 sm:px-4 sm:py-2.5",

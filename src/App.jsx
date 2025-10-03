@@ -1,16 +1,15 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useRef, useState, useEffect, useCallback } from "react";
+
 import VideoLayer from "./components/VideoLayer.jsx";
 import Overlay from "./components/Overlay.jsx";
-import Aos from "aos";
-import "aos/dist/aos.css";
+// AOS is lazy-loaded to reduce initial bundle size
 import Seo19 from "./components/Seo19.jsx";
 import PlayMusic from "./components/PlayMusic.jsx";
 
 const STORY_VIDEOS = ["/videos/home.mp4"];
 const BGMUSIC = "/audio/beautiful-in-white.mp3";
 
-// Default + route backgrounds
 const DEFAULT_BG = {
   src: "/videos/background.mp4",
   poster: "/images/background.png",
@@ -18,17 +17,8 @@ const DEFAULT_BG = {
 };
 
 const BG_BY_ROUTE = {
-  "/": {
-    src: "/videos/background.mp4",
-    poster: "/images/background.png",
-    loop: true,
-  },
-  "/home": {
-    src: "/videos/bg-homepage.mp4",
-    poster: "/images/home-bg.png",
-    loop: false,
-  },
-  // add more routes here ...
+  "/": { src: "/videos/background.mp4", poster: "/images/background.png", loop: true },
+  "/home": { src: "/videos/bg-homepage.mp4", poster: "/images/home-bg.png", loop: false },
 };
 
 export default function App() {
@@ -38,15 +28,13 @@ export default function App() {
   const audioRef = useRef(null);
   const videoRef = useRef(null);
 
-  // app state
+  // App state
   const [mode, setMode] = useState("background"); // 'background' | 'story'
   const [storyIndex, setStoryIndex] = useState(-1);
   const [unlocked, setUnlocked] = useState(false);
-
-  // gate for allowing audio to auto-play after unlock
   const [allowAudio, setAllowAudio] = useState(false);
 
-  // user mute preference (persisted)
+  // Persisted mute preference
   const [muted, setMuted] = useState(() => {
     try {
       return typeof window !== "undefined" && localStorage.getItem("bgMuted") === "1";
@@ -55,29 +43,32 @@ export default function App() {
     }
   });
 
-  // route background + override
+  // Background management
   const routeBg = BG_BY_ROUTE[pathname] ?? DEFAULT_BG;
   const [bgOverride, setBgOverride] = useState(null);
   const effectiveBg = bgOverride ?? routeBg;
 
   const setBackground = useCallback(
-    (next) => setBgOverride((prev) => ({ ...(prev ?? routeBg), ...next })),
+    (next) =>
+      setBgOverride((prev) => {
+        const base = prev ?? routeBg;
+        return { ...base, ...next, poster: next?.poster ?? base.poster };
+      }),
     [routeBg]
   );
   const resetBackground = useCallback(() => setBgOverride(null), []);
 
-  // smooth volume ramp
+  // Smooth volume ramp with resilient step timing
   const fadeTo = useCallback(async (target = 1, ms = 400) => {
     const a = audioRef.current;
     if (!a) return;
-    const steps = 10;
+    const steps = Math.max(2, Math.floor(ms / 25)); // at least 2 steps
     const start = a.volume ?? 1;
     const step = (target - start) / steps;
-    const dt = ms / steps;
     for (let i = 0; i < steps; i++) {
-      a.volume = Math.max(0, Math.min(1, (a.volume ?? start) + step));
+      a.volume = Math.min(1, Math.max(0, (a.volume ?? start) + step));
       // eslint-disable-next-line no-await-in-loop
-      await new Promise((r) => setTimeout(r, dt));
+      await new Promise((r) => setTimeout(r, ms / steps));
     }
   }, []);
 
@@ -87,14 +78,13 @@ export default function App() {
     const a = audioRef.current;
     if (!a) return;
     try {
-      const prevMuted = a.muted;
       const prevVol = a.volume ?? 1;
       a.muted = true;
       a.volume = 0;
       await a.play(); // silent play to satisfy autoplay policies
       a.pause();
       a.currentTime = 0;
-      a.muted = prevMuted || muted; // respect user mute
+      a.muted = muted; // respect user preference only
       a.volume = prevVol;
       setUnlocked(true);
     } catch {
@@ -113,20 +103,25 @@ export default function App() {
     };
   }, [primeAudio]);
 
-  // AOS init
+  // Lazy-load AOS on client
   useEffect(() => {
-    Aos.init({ duration: 800, easing: "ease-in-out", once: true });
+    let cleanup = () => {};
+    (async () => {
+      const { default: AOS } = await import("aos");
+      await import("aos/dist/aos.css");
+      AOS.init({ duration: 800, easing: "ease-in-out", once: true });
+      cleanup = () => AOS.refreshHard();
+    })();
+    return () => cleanup();
   }, []);
 
-  // clear override on route change
-  useEffect(() => {
-    setBgOverride(null);
-  }, [pathname]);
+  // Clear background override on route change
+  useEffect(() => setBgOverride(null), [pathname]);
 
-  // Enable + play immediately under the same gesture
+  // Enable + play immediately under same gesture
   const enableAudioNow = useCallback(async () => {
-    await primeAudio();         // satisfy autoplay policy
-    setAllowAudio(true);        // open the gate
+    await primeAudio();
+    setAllowAudio(true);
     const a = audioRef.current;
     if (a && !muted) {
       try {
@@ -137,18 +132,24 @@ export default function App() {
     }
   }, [primeAudio, muted, fadeTo]);
 
-  // public API to start the story (also enables audio)
+  // Public API to start the story (also enables audio)
   const startStory = useCallback(async () => {
     await enableAudioNow();
     setStoryIndex(0);
     setMode("story");
   }, [enableAudioNow]);
 
-  // central video/audio controller
+  // Guard story index for safe bounds
   useEffect(() => {
-    const v = videoRef.current;
+    if (mode === "story" && (storyIndex < 0 || storyIndex >= STORY_VIDEOS.length)) {
+      setStoryIndex(0);
+    }
+  }, [mode, storyIndex]);
+
+  // Central video/audio controller
+  useEffect(() => {
+    if (!videoRef.current) return;
     const a = audioRef.current;
-    if (!v) return;
 
     const applyAndPlay = async (src, { loop }) => {
       const el = videoRef.current;
@@ -157,6 +158,8 @@ export default function App() {
       el.loop = !!loop;
       el.muted = true;
       el.setAttribute("muted", "");
+      el.setAttribute("playsinline", ""); // iOS guard
+      el.srcObject = null; // safety reset
 
       const absolute = new URL(src, window.location.origin).href;
       const same = el.currentSrc === absolute || el.src === absolute;
@@ -197,7 +200,7 @@ export default function App() {
     }
   }, [mode, storyIndex, unlocked, muted, effectiveBg, fadeTo, allowAudio]);
 
-  // end-of-video only in story mode
+  // End-of-video only in story mode
   const handleEnded = useCallback(() => {
     if (mode !== "story") return;
     const next = storyIndex + 1;
@@ -210,7 +213,7 @@ export default function App() {
     }
   }, [mode, storyIndex, navigate, pathname]);
 
-  // Visibility: pause when hidden, resume when visible (respect allowAudio)
+  // Visibility: fade/pause when hidden, resume when visible (respect allowAudio)
   useEffect(() => {
     const a = audioRef.current;
     if (!a) return;
@@ -232,7 +235,7 @@ export default function App() {
     return () => document.removeEventListener("visibilitychange", onVisibility);
   }, [unlocked, muted, fadeTo, allowAudio]);
 
-  // pause when muted, resume when unmuted (if allowed)
+  // Pause when muted, resume when unmuted (if allowed)
   useEffect(() => {
     const a = audioRef.current;
     if (!a) return;
@@ -264,13 +267,21 @@ export default function App() {
     } catch {}
   }, [muted]);
 
-  // show PlayMusic ONLY on /home and NOT during the story
+  // Only show PlayMusic on /home and NOT during the story
   const showPlayMusic = pathname === "/home" && mode !== "story";
 
   return (
     <>
       {/* Site-wide SEO defaults (pages can override) */}
       <Seo19 />
+
+      {/* Skip link for keyboard users */}
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:bg-white/90 focus:text-black focus:p-2 focus:rounded"
+      >
+        Skip to content
+      </a>
 
       {/* Ambient music */}
       <audio ref={audioRef} src={BGMUSIC} preload="auto" loop hidden />
@@ -295,14 +306,14 @@ export default function App() {
       )}
 
       {/* Children get the small API */}
-      <main className="relative z-20">
+      <main id="main" className="relative z-20">
         <Outlet
           context={{
             mode,
-            startStory,    // unlock + play + start story
+            startStory,
             setBackground,
             resetBackground,
-            setAllowAudio, // optional: enable music from routed pages
+            setAllowAudio,
             allowAudio,
             muted,
             setMuted,

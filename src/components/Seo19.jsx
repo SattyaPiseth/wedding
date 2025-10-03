@@ -1,15 +1,16 @@
 import { useLocation } from "react-router-dom";
+import { useMemo } from "react";
 
 const DEFAULTS = {
   siteName: "kim & nary wedding",
   title: "Kim & Nary Wedding — Save the Date",
   description: "Join us in celebrating love. Ceremony details, schedule, map, and RSVP.",
   image: "/images/landscape-04.jpg",
+  imageAlt: "Kim & Nary wedding cover",
   themeColor: "#ffffff",
   ogType: "website",
   twitterCard: "summary_large_image",
   locale: "km_KH",
-  imageAlt: "Kim & Nary wedding cover",
 };
 
 const RAW_BASE_URL = import.meta.env.VITE_SITE_URL || "http://localhost:5173";
@@ -67,32 +68,40 @@ export default function Seo19({
   twitterSite,
   ogLocaleAlternates = [],
 
-  // 🔹 NEW: crawler-specific + freshness
-  googleBot,   // e.g., "noindex, nofollow, noarchive"
-  bingBot,     // same
-  updatedTime, // ISO 8601
+  // crawler-specific + freshness
+  googleBot,    // e.g., "noindex, nofollow, noarchive"
+  bingBot,      // same
+  updatedTime,  // ISO 8601
 
   children,
 }) {
   const loc = useLocation();
   const currentPath = path ?? loc.pathname;
 
-  const pageUrl = normalizeCanonical(canonical || absUrl(currentPath));
+  const pageUrl = useMemo(
+    () => normalizeCanonical(canonical || absUrl(currentPath)),
+    [canonical, currentPath]
+  );
+
   const pageTitle = title ? `${title} • ${siteName}` : DEFAULTS.title;
   const pageDesc = description || DEFAULTS.description;
 
   const imageUrl = absUrl(image);
   const imageSecureUrl = imageUrl.replace(/^http:\/\//i, "https://");
 
-  const robots = [
-    noindex ? "noindex,nofollow" : "index,follow",
-    noarchive && "noarchive",
-    noimageindex && "noimageindex",
-    nosnippet && "nosnippet",
-    "max-image-preview:large",
-  ]
-    .filter(Boolean)
-    .join(", ");
+  const robots = useMemo(
+    () =>
+      [
+        noindex ? "noindex,nofollow" : "index,follow",
+        noarchive && "noarchive",
+        noimageindex && "noimageindex",
+        nosnippet && "nosnippet",
+        "max-image-preview:large",
+      ]
+        .filter(Boolean)
+        .join(", "),
+    [noindex, noarchive, noimageindex, nosnippet]
+  );
 
   return (
     <>

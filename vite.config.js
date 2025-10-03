@@ -7,4 +7,5 @@ export default defineConfig({
   plugins: [
     react(),
   tailwindcss(),],
+  assetsInclude: ["**/*.mp3", "**/*.mp4", "**/*.webm"],
 })
