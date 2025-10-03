@@ -1,4 +1,4 @@
-import { MasonryImage } from "./MasonryImage";
+import  MasonryImage  from "./MasonryImage";
 
 export function MasonryGallery({ images, onOpen }) {
   return (
