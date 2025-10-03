@@ -150,7 +150,6 @@ export default function DescriptionSection({
         {/* Countdown */}
         <section
           className="mt-6 flex flex-col items-center justify-center gap-3 text-3xl"
-          data-aos="fade-up"
         >
           <h3 className="great-vibes-regular tracking-wide">Save The Date</h3>
           <p className="great-vibes-regular text-xl tracking-wider">
@@ -161,7 +160,7 @@ export default function DescriptionSection({
 
         {/* Gallery */}
         <h3
-          className="moul-regular text-lg mt-6"  data-aos="fade-up"
+          className="moul-regular text-lg mt-6" 
         >
           កម្រងរូបភាព
         </h3>
