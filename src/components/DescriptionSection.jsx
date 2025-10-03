@@ -136,7 +136,6 @@ export default function DescriptionSection({
             src={morning_event_image}
             alt="Morning event"
             loading="lazy"
-            data-aos="flip-left"
           />
         </figure>
 
@@ -145,7 +144,6 @@ export default function DescriptionSection({
             src={afternoon_event_image}
             alt="Afternoon event"
             loading="lazy"
-            data-aos="flip-right"
           />
         </figure>
 
