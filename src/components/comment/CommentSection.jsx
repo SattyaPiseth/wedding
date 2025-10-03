@@ -2,7 +2,7 @@ import React, { useId, useState, useRef } from "react";
 
 /* ---------- Shared Styles (glassmorphism) ---------- */
 const panel =
-  "relative overflow-hidden rounded-2xl bg-white/10  " +
+  "relative overflow-hidden rounded-md bg-white/10  " +
   "backdrop-blur-xl border border-white/30  shadow-xl shadow-black/10";
 
 /* Inputs */
