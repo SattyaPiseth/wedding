@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import Seo19 from "../components/Seo19";
 import DescriptionSection  from "../components/DescriptionSection";
-import Heading from "../components/Heading";
 import  ParentsSection  from "../components/ParentsSection";
+import Heading from "../components/base/Heading";
 
 export default function HomePage() {
   // Base URL (trim trailing slash)

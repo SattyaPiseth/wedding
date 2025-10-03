@@ -176,7 +176,9 @@ export default function DescriptionSection({
           />
         )}
        <GratitudeSection/>
-       <PromoteSection/>
+       <div data-aos="fade-up">
+        <PromoteSection/>
+       </div>
       </SoftCard>
     </section>
   );

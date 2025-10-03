@@ -1,11 +1,10 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useRef, useState, useEffect, useCallback } from "react";
 
-import VideoLayer from "./components/VideoLayer.jsx";
-import Overlay from "./components/Overlay.jsx";
-// AOS CSS is now loaded in main.jsx
+import Overlay from "./components/base/Overlay.jsx";
 import Seo19 from "./components/Seo19.jsx";
 import PlayMusic from "./components/PlayMusic.jsx";
+import VideoLayer from "./components/video/VideoLayer.jsx";
 
 const STORY_VIDEOS = ["/videos/home.mp4"];
 const BGMUSIC = "/audio/beautiful-in-white.mp3";

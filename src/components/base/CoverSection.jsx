@@ -1,5 +1,6 @@
-import CustomerNameInline from "./customer/CustomerNameInline";
-import useCustomerByUuid from "../hook/useCustomerByUuid";
+import useCustomerByUuid from "../../hook/useCustomerByUuid";
+import CustomerNameInline from "../customer/CustomerNameInline";
+
 
 export default function CoverSection({
   isStoryPlaying = false,
