@@ -104,16 +104,65 @@ export default function App() {
   }, [primeAudio]);
 
   // Lazy-load AOS on client
-  useEffect(() => {
-    let cleanup = () => {};
-    (async () => {
+  // useEffect(() => {
+  //   let cleanup = () => {};
+  //   (async () => {
+  //     const { default: AOS } = await import("aos");
+  //     await import("aos/dist/aos.css");
+  //     AOS.init({ duration: 800, easing: "ease-in-out", once: true });
+  //     cleanup = () => AOS.refreshHard();
+  //   })();
+  //   return () => cleanup();
+  // }, []);
+
+  // (keep your existing imports)
+
+const aosRef = useRef(null);
+const aosReadyRef = useRef(false);
+
+// init once
+useEffect(() => {
+  let mounted = true;
+  (async () => {
+    if (!aosRef.current) {
       const { default: AOS } = await import("aos");
-      await import("aos/dist/aos.css");
-      AOS.init({ duration: 800, easing: "ease-in-out", once: true });
-      cleanup = () => AOS.refreshHard();
-    })();
-    return () => cleanup();
-  }, []);
+      await import("aos/dist/aos.css"); // keep lazy if you prefer
+      aosRef.current = AOS;
+    }
+    if (!mounted) return;
+    aosRef.current.init({
+      duration: 800,
+      easing: "ease-in-out",
+      once: true,
+      disable: () =>
+        typeof window !== "undefined" &&
+        window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
+    });
+    aosReadyRef.current = true;
+  })();
+  return () => { mounted = false; };
+}, []);
+
+// refresh on route change AFTER DOM is painted
+useEffect(() => {
+  const raf = requestAnimationFrame(() => {
+    if (aosReadyRef.current) {
+      try { aosRef.current.refresh(); } catch {}
+    }
+  });
+  return () => cancelAnimationFrame(raf);
+}, [pathname]);
+
+// (optional) keep offsets fresh if content resizes after load
+useEffect(() => {
+  if (!("ResizeObserver" in window)) return;
+  const ro = new ResizeObserver(() => {
+    if (aosReadyRef.current) aosRef.current.refresh();
+  });
+  ro.observe(document.body);
+  return () => ro.disconnect();
+}, []);
+
 
   // Clear background override on route change
   useEffect(() => setBgOverride(null), [pathname]);
