@@ -143,7 +143,7 @@ export function CommentSection({
     <section className="relative py-10 sm:py-16">
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-white/5 to-transparent " />
 
-      <div className="relative px-4 mx-auto max-w-screen-sm">
+      <div className="relative mx-auto max-w-screen-sm">
         <div className={panel}>
           <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-white/30 " />
           <div className="pointer-events-none absolute -inset-1 rounded-[28px] bg-gradient-to-tr from-white/30 via-white/0 to-white/20 blur-2xl opacity-30" />
