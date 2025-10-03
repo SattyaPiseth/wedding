@@ -9,6 +9,7 @@ import google_map_icon from "/images/google-maps.png";
 import morning_event_image from "/images/morning-event.png";
 import afternoon_event_image from "/images/afternoon-event.png";
 import { GratitudeSection } from "./GratitudeSection";
+import { PromoteSection } from "./PromoteSection";
 
 export default function DescriptionSection({
   // Customizable props with safe defaults
@@ -182,6 +183,7 @@ export default function DescriptionSection({
           />
         )}
        <GratitudeSection/>
+       <PromoteSection/>
       </SoftCard>
     </section>
   );
