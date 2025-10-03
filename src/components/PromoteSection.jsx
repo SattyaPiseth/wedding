@@ -1,6 +1,11 @@
 // components/PromoteSection.jsx
-import React, { useRef } from "react";
-import { motion, useMotionValue, useTransform, useReducedMotion } from "framer-motion";
+import React, { useRef, useEffect } from "react";
+import {
+  motion,
+  useMotionValue,
+  useTransform,
+  useReducedMotion,
+} from "framer-motion";
 
 /**
  * @param {object} props
@@ -12,7 +17,9 @@ import { motion, useMotionValue, useTransform, useReducedMotion } from "framer-m
  * @param {number} [props.width]
  * @param {number} [props.height]
  * @param {"sm"|"md"|"lg"} [props.glass="md"]
- * @param {boolean} [props.enableTilt=true] - Enable subtle 3D tilt on hover
+ * @param {boolean} [props.enableTilt=true]
+ * @param {number} [props.tiltRange=40]      // px radius mapped to rotation
+ * @param {number} [props.hoverScale=1.01]   // figure hover scale
  */
 export const PromoteSection = ({
   src = "/images/memora-shine/memora-shine-end-page.png",
@@ -24,6 +31,8 @@ export const PromoteSection = ({
   height,
   glass = "md",
   enableTilt = true,
+  tiltRange = 40,
+  hoverScale = 1.01,
 }) => {
   const prefersReduced = useReducedMotion();
 
@@ -34,27 +43,58 @@ export const PromoteSection = ({
     lg: "bg-white/15 supports-[backdrop-filter]:bg-white/20 supports-[backdrop-filter]:backdrop-blur-lg",
   };
 
-  // Subtle parallax tilt
+  // Motion values
   const ref = useRef(null);
+  const rafRef = useRef(0); // throttle mousemove with rAF
+
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
-  const rotateX = useTransform(my, [-40, 40], prefersReduced || !enableTilt ? [0, 0] : [6, -6]);
-  const rotateY = useTransform(mx, [-40, 40], prefersReduced || !enableTilt ? [0, 0] : [-6, 6]);
 
+  // Map mouse distance to rotation (guarded by reduced motion / enableTilt)
+  const rotateX = useTransform(
+    my,
+    [-tiltRange, tiltRange],
+    prefersReduced || !enableTilt ? [0, 0] : [6, -6]
+  );
+  const rotateY = useTransform(
+    mx,
+    [-tiltRange, tiltRange],
+    prefersReduced || !enableTilt ? [0, 0] : [-6, 6]
+  );
+
+  // Mouse handlers (rAF throttled for less layout thrash)
   const onMove = (e) => {
-    if (!enableTilt || prefersReduced || !ref.current) return;
-    const r = ref.current.getBoundingClientRect();
-    mx.set(Math.max(-40, Math.min(40, (e.clientX - r.left - r.width / 2) / 6)));
-    my.set(Math.max(-40, Math.min(40, (e.clientY - r.top - r.height / 2) / 6)));
+    if (prefersReduced || !enableTilt || !ref.current) return;
+
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      const r = ref.current.getBoundingClientRect();
+      const dx = e.clientX - (r.left + r.width / 2);
+      const dy = e.clientY - (r.top + r.height / 2);
+
+      // clamp into [-tiltRange, tiltRange]
+      const cx = Math.max(-tiltRange, Math.min(tiltRange, dx / 6));
+      const cy = Math.max(-tiltRange, Math.min(tiltRange, dy / 6));
+      mx.set(cx);
+      my.set(cy);
+    });
   };
+
   const onLeave = () => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
     mx.set(0);
     my.set(0);
   };
 
-  // Entrance
+  useEffect(() => () => rafRef.current && cancelAnimationFrame(rafRef.current), []);
+
+  // Entrance variants
   const figureVariants = {
-    hidden: { opacity: 0, y: prefersReduced ? 0 : 16, scale: prefersReduced ? 1 : 0.985 },
+    hidden: {
+      opacity: 0,
+      y: prefersReduced ? 0 : 16,
+      scale: prefersReduced ? 1 : 0.985,
+    },
     show: {
       opacity: 1,
       y: 0,
@@ -63,10 +103,13 @@ export const PromoteSection = ({
     },
   };
 
-  // Breathing glow (disabled for reduced motion)
+  // Breathing glow
   const glowPulse = prefersReduced
     ? {}
-    : { opacity: [0.15, 0.3, 0.15], transition: { duration: 4, repeat: Infinity, ease: "easeInOut" } };
+    : {
+        opacity: [0.15, 0.3, 0.15],
+        transition: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+      };
 
   return (
     <motion.figure
@@ -77,16 +120,26 @@ export const PromoteSection = ({
       initial="hidden"
       whileInView="show"
       viewport={{ once: true, amount: 0.3 }}
-      style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-      whileHover={prefersReduced ? {} : { scale: 1.01 }}
+      style={{
+        rotateX,
+        rotateY,
+        transformStyle: "preserve-3d",
+        willChange: enableTilt && !prefersReduced ? "transform" : undefined,
+      }}
+      whileHover={prefersReduced ? {} : { scale: hoverScale }}
       className={[
         "relative isolate mt-6 overflow-hidden rounded-lg",
-        "border border-white/20 ring-1 ring-black/5",
+        // Borders & subtle ring
+        "border border-white/20 ring-1 ring-black/5 dark:border-white/10 dark:ring-white/5",
+        // Glass
         glassMap[glass],
-        "shadow-lg",
-        "dark:border-white/10 dark:ring-white/5 dark:bg-white/5",
+        // Shadow + GPU hint
+        "shadow-lg transform-gpu",
         className,
       ].join(" ")}
+      // more descriptive landmark for screen readers
+      role="group"
+      aria-label={caption || alt || "Promotion"}
     >
       {/* Soft animated glows */}
       <motion.div
@@ -101,13 +154,21 @@ export const PromoteSection = ({
       />
 
       {/* Content */}
-      <motion.div className="relative z-10" style={{ transform: enableTilt && !prefersReduced ? "translateZ(20px)" : undefined }}>
+      <motion.div
+        className="relative z-10"
+        style={{
+          transform:
+            enableTilt && !prefersReduced ? "translateZ(20px)" : undefined,
+          willChange: enableTilt && !prefersReduced ? "transform" : undefined,
+        }}
+      >
         <motion.img
           src={src}
           alt={alt}
           loading="lazy"
           decoding="async"
-          className="block h-auto w-full rounded-md shadow-sm"
+          draggable="false"
+          className="block h-auto w-full rounded-md shadow-sm select-none"
           sizes={sizes}
           width={width}
           height={height}
@@ -115,9 +176,10 @@ export const PromoteSection = ({
           whileHover={prefersReduced ? {} : { scale: 1.025 }}
           transition={{ type: "spring", stiffness: 180, damping: 16 }}
         />
+
         {caption && (
           <motion.figcaption
-            className="siemreap-regular text-center text-sm sm:text-base px-4 py-3 text-black/70 dark:text-white/80"
+            className="siemreap-regular px-4 py-3 text-center text-sm sm:text-base text-black/70 dark:text-white/80"
             initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.6 }}
@@ -133,7 +195,9 @@ export const PromoteSection = ({
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 rounded-lg ring-1 ring-inset ring-white/20"
         animate={prefersReduced ? {} : { opacity: [0.6, 0.85, 0.6] }}
-        transition={prefersReduced ? {} : { duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        transition={
+          prefersReduced ? {} : { duration: 6, repeat: Infinity, ease: "easeInOut" }
+        }
       />
     </motion.figure>
   );
