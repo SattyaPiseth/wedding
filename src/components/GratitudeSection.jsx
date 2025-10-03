@@ -6,7 +6,8 @@ export const GratitudeSection = () => {
         <section
           aria-labelledby="gratitude-title"
           className="my-[5vh] mx-auto max-w-screen-md"
-          data-aos="flip-down"
+          data-aos="fade-up"
+     data-aos-anchor-placement="bottom-bottom"
         >
           <h3
             id="gratitude-title"
