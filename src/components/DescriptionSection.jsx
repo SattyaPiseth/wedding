@@ -10,6 +10,7 @@ import morning_event_image from "/images/morning-event.png";
 import afternoon_event_image from "/images/afternoon-event.png";
 import { GratitudeSection } from "./GratitudeSection";
 import { PromoteSection } from "./PromoteSection";
+import { CommentSection } from "./comment/CommentSection";
 
 export default function DescriptionSection({
   // Customizable props with safe defaults
@@ -176,6 +177,7 @@ export default function DescriptionSection({
           />
         )}
        <GratitudeSection/>
+       <CommentSection/>
        <div data-aos="fade-up">
         <PromoteSection/>
        </div>

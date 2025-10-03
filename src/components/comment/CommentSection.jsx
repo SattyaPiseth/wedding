@@ -1,29 +1,261 @@
-import React from 'react'
+import React, { useId, useState, useRef } from "react";
 
-export const CommentSection = () => {
+/* ---------- Shared Styles (glassmorphism) ---------- */
+const panel =
+  "relative overflow-hidden rounded-2xl bg-white/10 dark:bg-white/5 " +
+  "backdrop-blur-xl border border-white/30 dark:border-white/10 shadow-xl shadow-black/10";
+
+/* Inputs */
+const inputBase =
+  "w-full rounded-lg siemreap-regular " +
+  "text-sm leading-6 px-4 py-3 " +
+  "bg-white/60 dark:bg-white/10 border border-white/50 dark:border-white/10 " +
+  "text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 " +
+  "shadow-sm focus:outline-none focus:ring-4 focus:ring-white/40 dark:focus:ring-white/10 " +
+  "focus:border-white/70 dark:focus:border-white/20";
+
+const sizes = {
+  sm: "text-sm leading-6 px-3 py-2",
+  md: "text-base leading-7 px-4 py-3",
+  lg: "text-lg leading-8 px-5 py-4",
+};
+
+/* ---------- Reusable Inputs ---------- */
+function Field({ id, label, className = "", size = "md", ...props }) {
   return (
-    <>
-    <section className="bg-white dark:bg-gray-900">
-        <div className="py-8 lg:py-16 px-4 mx-auto max-w-screen-md">
-            <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-center text-gray-900 dark:text-white">Contact Us</h2>
-            <p className="mb-8 lg:mb-16 font-light text-center text-gray-500 dark:text-gray-400 sm:text-xl">Got a technical issue? Want to send feedback about a beta feature? Need details about our Business plan? Let us know.</p>
-            <form action="#" className="space-y-8">
-                <div>
-                    <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Your email</label>
-                    <input type="email" id="email" className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 dark:shadow-sm-light" placeholder="name@flowbite.com" required />
-                </div>
-                <div>
-                    <label htmlFor="subject" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Subject</label>
-                    <input type="text" id="subject" className="block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 dark:shadow-sm-light" placeholder="Let us know how we can help you" required />
-                </div>
-                <div className="sm:col-span-2">
-                    <label htmlFor="message" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Your message</label>
-                    <textarea id="message" rows="6" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg shadow-sm border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Leave a comment..."></textarea>
-                </div>
-                <button type="submit" className="py-3 px-5 text-sm font-medium text-center text-white rounded-lg bg-primary-700 sm:w-fit hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Send message</button>
+    <div>
+      <label
+        htmlFor={id}
+        className="block mb-2 text-sm font-medium text-gray-800 dark:text-gray-200 siemreap-regular text-left"
+      >
+        {label}
+      </label>
+      <input id={id} className={[inputBase, sizes[size], className].join(" ")} {...props} />
+    </div>
+  );
+}
+
+function Textarea({
+  id,
+  label,
+  hint,
+  hintId,
+  maxLength = 500,
+  value,
+  onChange,
+  className = "",
+  size = "md",
+  ...props
+}) {
+  const count = value?.length ?? 0;
+  const warn = maxLength >= 50 && count >= maxLength - 20;
+  return (
+    <div>
+      <label
+        htmlFor={id}
+        className="block mb-2 text-sm font-medium text-gray-800 dark:text-gray-200 siemreap-regular text-left"
+      >
+        {label}
+      </label>
+      <textarea
+        id={id}
+        className={[inputBase, sizes[size], "resize-y", className].join(" ")}
+        rows={6}
+        maxLength={maxLength}
+        value={value}
+        onChange={onChange}
+        aria-describedby={hintId}
+        spellCheck="false"
+        dir="auto"
+        {...props}
+      />
+      <div
+        id={hintId}
+        className="mt-2 flex items-center justify-between text-[11px] text-gray-600/80 dark:text-gray-300/80 siemreap-regular"
+      >
+        <span>{hint}</span>
+        <span aria-live="polite" className={warn ? "font-semibold" : ""}>
+          {count}/{maxLength}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Main Component ---------- */
+export function CommentSection({
+  onSubmit,
+  pending = false,
+  maxLength = 500,
+  minLength = 3,
+  title = "សារជូនពរ",
+}) {
+  const reactId = useId();
+  const nameId = `cs-name-${reactId}`;
+  const msgId = `cs-message-${reactId}`;
+  const hintId = `cs-hint-${reactId}`;
+  const hpId = `hp-${reactId}`; // honeypot
+
+  const [name, setName] = useState("");
+  const [message, setMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const composingRef = useRef(false); // avoid submitting mid-IME composition
+
+  const trimmedName = name.trim();
+  const trimmedMsg = message.trim();
+  const meetsMin = trimmedName.length >= minLength && trimmedMsg.length >= minLength;
+  const isBusy = pending || submitting;
+  const isDisabled = isBusy || !meetsMin;
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (composingRef.current) return;
+    if (!meetsMin) return;
+
+    // honeypot check
+    const data = new FormData(e.currentTarget);
+    if (data.get(hpId)) return;
+
+    const payload = { name: trimmedName, message: trimmedMsg };
+    try {
+      setError("");
+      setSubmitting(true);
+      await onSubmit?.(payload);
+      setName("");
+      setMessage("");
+    } catch (err) {
+      setError(err?.message || "ការបញ្ជូនបរាជ័យ។ សូមព្យាយាមម្តងទៀត។");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  function onKeyDown(e) {
+    // Ctrl/⌘ + Enter submits (handy on desktop)
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter" && !isDisabled) {
+      e.preventDefault();
+      e.currentTarget.requestSubmit?.();
+    }
+  }
+
+  return (
+    <section className="relative py-10 sm:py-16">
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-white/5 to-transparent dark:via-white/0" />
+
+      <div className="relative px-4 mx-auto max-w-screen-sm">
+        <div className={panel}>
+          <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-white/30 dark:ring-white/10" />
+          <div className="pointer-events-none absolute -inset-1 rounded-[28px] bg-gradient-to-tr from-white/30 via-white/0 to-white/20 blur-2xl opacity-30" />
+
+          <div className="relative p-6 sm:p-8">
+            <h2 className="text-center font-extrabold tracking-tight moul-regular text-base sm:text-lg leading-tight dark:text-white">
+              {title}
+            </h2>
+
+            <p className="mt-2 text-center text-xs sm:text-sm dark:text-gray-300 siemreap-regular text-pretty leading-relaxed tracking-wide">
+              សូមបញ្ចូលឈ្មោះ និង ផ្ញើសារជូនពរ ដើម្បីប្រសិទ្ធពរជ័យ ដល់គូស្វាមី ភរិយាថ្មី
+            </p>
+
+            <form
+              className="mt-6 space-y-5"
+              onSubmit={handleSubmit}
+              onKeyDown={onKeyDown}
+              noValidate
+            >
+              {/* Honeypot (hidden to humans) */}
+              <div className="hidden">
+                <label htmlFor={hpId}>Do not fill</label>
+                <input id={hpId} name={hpId} tabIndex={-1} autoComplete="off" />
+              </div>
+
+              <Field
+                id={nameId}
+                label="ឈ្មោះ"
+                type="text"
+                name="name"
+                placeholder="សូមបញ្ចូលឈ្មោះរបស់អ្នក"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onCompositionStart={() => (composingRef.current = true)}
+                onCompositionEnd={() => (composingRef.current = false)}
+                size="md"
+                aria-invalid={trimmedName.length < minLength ? "true" : "false"}
+                autoComplete="name"
+                inputMode="text"
+              />
+
+              <Textarea
+                id={msgId}
+                label="សារជូនពរ"
+                name="message"
+                placeholder="សូមបញ្ចូលសារជូនពរ"
+                hint="💡 ព័ត៌មានរបស់អ្នកអាចត្រូវបានបង្ហាញលើទំព័រខាងលើ (បើអ្នកយល់ព្រម)"
+                hintId={hintId}
+                maxLength={maxLength}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onCompositionStart={() => (composingRef.current = true)}
+                onCompositionEnd={() => (composingRef.current = false)}
+                size="md"
+                aria-invalid={trimmedMsg.length < minLength ? "true" : "false"}
+              />
+
+              {error ? (
+                <p className="text-sm text-red-600 dark:text-red-400 siemreap-regular" aria-live="assertive">
+                  {error}
+                </p>
+              ) : (
+                <span className="sr-only" aria-live="polite">
+                  {isBusy ? "កំពុងបញ្ជូន..." : "រួចរាល់"}
+                </span>
+              )}
+
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={isDisabled}
+                  className={[
+                    "inline-flex items-center justify-center rounded-lg px-5 py-3",
+                    "text-sm font-medium text-white",
+                    "bg-black/80 dark:bg-white/10 hover:bg-black dark:hover:bg-white/20",
+                    "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40 dark:focus-visible:ring-white/20",
+                    "active:scale-[0.99] transition shadow-md shadow-black/20 backdrop-blur siemreap-regular",
+                    isDisabled ? "opacity-60 cursor-not-allowed" : "",
+                  ].join(" ")}
+                >
+                  {isBusy ? (
+                    <>
+                      <svg
+                        className="mr-2 h-4 w-4 animate-spin"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        aria-hidden="true"
+                      >
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" opacity="0.25" />
+                        <path
+                          d="M22 12a10 10 0 0 1-10 10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                      កំពុងបញ្ជូន...
+                    </>
+                  ) : (
+                    "បញ្ជូនសារ"
+                  )}
+                </button>
+              </div>
             </form>
+          </div>
         </div>
+
+        <div className="pointer-events-none absolute -z-10 inset-x-0 -top-10 flex justify-center opacity-50">
+          <div className="h-40 w-40 rounded-full bg-white/20 blur-3xl dark:bg-white/10" />
+        </div>
+      </div>
     </section>
-    </>
-  )
+  );
 }
