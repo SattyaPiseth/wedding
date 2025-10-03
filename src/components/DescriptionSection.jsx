@@ -131,30 +131,28 @@ export default function DescriptionSection({
         </section>
 
         {/* Event posters */}
-        <figure className="mt-6">
+        <figure className="mt-6" >
           <img
             src={morning_event_image}
             alt="Morning event"
             loading="lazy"
-            data-aos="fade-up"
-            data-aos-anchor-placement="top-bottom"
+            data-aos="flip-left"
           />
         </figure>
+
         <figure className="mt-4">
           <img
             src={afternoon_event_image}
             alt="Afternoon event"
             loading="lazy"
-            data-aos="fade-up"
-            data-aos-anchor-placement="top-bottom"
+            data-aos="flip-right"
           />
         </figure>
 
         {/* Countdown */}
         <section
           className="mt-6 flex flex-col items-center justify-center gap-3 text-3xl"
-          data-aos="fade-up"
-          data-aos-anchor-placement="top-bottom"
+         
         >
           <h3 className="great-vibes-regular tracking-wide">Save The Date</h3>
           <p className="great-vibes-regular text-xl tracking-wider">
@@ -166,8 +164,6 @@ export default function DescriptionSection({
         {/* Gallery */}
         <h3
           className="moul-regular text-lg mt-6"
-          data-aos="fade-up"
-          data-aos-anchor-placement="top-bottom"
         >
           កម្រងរូបភាព
         </h3>
