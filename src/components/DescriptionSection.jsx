@@ -40,7 +40,7 @@ export default function DescriptionSection({
     <section
       lang="km"
       aria-labelledby="invite-title"
-      className="mx-auto max-w-2xl sm:px-12 sm:py-8 md:px-28 lg:px-32"
+      className="mx-auto max-w-2xl sm:px-12 sm:py-8 md:px-28 lg:px-32" data-aos="fade-up"
     >
       <SoftCard>
         {/* Invite Heading */}
@@ -131,7 +131,7 @@ export default function DescriptionSection({
         </section>
 
         {/* Event posters */}
-        <figure className="mt-6"  data-aos="fade-up">
+        <figure className="mt-6">
           <img
             src={morning_event_image}
             alt="Morning event"
