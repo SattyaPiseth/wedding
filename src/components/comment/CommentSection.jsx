@@ -2,17 +2,17 @@ import React, { useId, useState, useRef } from "react";
 
 /* ---------- Shared Styles (glassmorphism) ---------- */
 const panel =
-  "relative overflow-hidden rounded-2xl bg-white/10 dark:bg-white/5 " +
-  "backdrop-blur-xl border border-white/30 dark:border-white/10 shadow-xl shadow-black/10";
+  "relative overflow-hidden rounded-2xl bg-white/10  " +
+  "backdrop-blur-xl border border-white/30  shadow-xl shadow-black/10";
 
 /* Inputs */
 const inputBase =
   "w-full rounded-lg siemreap-regular " +
   "text-sm leading-6 px-4 py-3 " +
-  "bg-white/60 dark:bg-white/10 border border-white/50 dark:border-white/10 " +
-  "text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 " +
-  "shadow-sm focus:outline-none focus:ring-4 focus:ring-white/40 dark:focus:ring-white/10 " +
-  "focus:border-white/70 dark:focus:border-white/20";
+  "bg-white/60 border border-white/50  " +
+  "text-gray-900  placeholder:text-gray-500  " +
+  "shadow-sm focus:outline-none focus:ring-4 focus:ring-white/40 " +
+  "focus:border-white/70 ";
 
 const sizes = {
   sm: "text-sm leading-6 px-3 py-2",
@@ -26,7 +26,7 @@ function Field({ id, label, className = "", size = "md", ...props }) {
     <div>
       <label
         htmlFor={id}
-        className="block mb-2 text-sm font-medium text-gray-800 dark:text-gray-200 siemreap-regular text-left"
+        className="block mb-2 text-sm font-medium text-gray-800  siemreap-regular text-left"
       >
         {label}
       </label>
@@ -53,7 +53,7 @@ function Textarea({
     <div>
       <label
         htmlFor={id}
-        className="block mb-2 text-sm font-medium text-gray-800 dark:text-gray-200 siemreap-regular text-left"
+        className="block mb-2 text-sm font-medium text-gray-800  siemreap-regular text-left"
       >
         {label}
       </label>
@@ -71,7 +71,7 @@ function Textarea({
       />
       <div
         id={hintId}
-        className="mt-2 flex items-center justify-between text-[11px] text-gray-600/80 dark:text-gray-300/80 siemreap-regular"
+        className="mt-2 flex items-center justify-between text-[11px] text-gray-600/80 siemreap-regular"
       >
         <span>{hint}</span>
         <span aria-live="polite" className={warn ? "font-semibold" : ""}>
@@ -141,19 +141,19 @@ export function CommentSection({
 
   return (
     <section className="relative py-10 sm:py-16">
-      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-white/5 to-transparent dark:via-white/0" />
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-white/5 to-transparent " />
 
       <div className="relative px-4 mx-auto max-w-screen-sm">
         <div className={panel}>
-          <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-white/30 dark:ring-white/10" />
+          <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-white/30 " />
           <div className="pointer-events-none absolute -inset-1 rounded-[28px] bg-gradient-to-tr from-white/30 via-white/0 to-white/20 blur-2xl opacity-30" />
 
           <div className="relative p-6 sm:p-8">
-            <h2 className="text-center font-extrabold tracking-tight moul-regular text-base sm:text-lg leading-tight dark:text-white">
+            <h2 className="text-center font-extrabold tracking-tight moul-regular text-base sm:text-lg leading-tight ">
               {title}
             </h2>
 
-            <p className="mt-2 text-center text-xs sm:text-sm dark:text-gray-300 siemreap-regular text-pretty leading-relaxed tracking-wide">
+            <p className="mt-2 text-center text-xs sm:text-sm  siemreap-regular text-pretty leading-relaxed tracking-wide">
               សូមបញ្ចូលឈ្មោះ និង ផ្ញើសារជូនពរ ដើម្បីប្រសិទ្ធពរជ័យ ដល់គូស្វាមី ភរិយាថ្មី
             </p>
 
@@ -203,7 +203,7 @@ export function CommentSection({
               />
 
               {error ? (
-                <p className="text-sm text-red-600 dark:text-red-400 siemreap-regular" aria-live="assertive">
+                <p className="text-sm text-red-600 siemreap-regular" aria-live="assertive">
                   {error}
                 </p>
               ) : (
@@ -219,8 +219,8 @@ export function CommentSection({
                   className={[
                     "inline-flex items-center justify-center rounded-lg px-5 py-3",
                     "text-sm font-medium text-white",
-                    "bg-black/80 dark:bg-white/10 hover:bg-black dark:hover:bg-white/20",
-                    "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40 dark:focus-visible:ring-white/20",
+                    "bg-black/80  hover:bg-black ",
+                    "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40",
                     "active:scale-[0.99] transition shadow-md shadow-black/20 backdrop-blur siemreap-regular",
                     isDisabled ? "opacity-60 cursor-not-allowed" : "",
                   ].join(" ")}
@@ -253,7 +253,7 @@ export function CommentSection({
         </div>
 
         <div className="pointer-events-none absolute -z-10 inset-x-0 -top-10 flex justify-center opacity-50">
-          <div className="h-40 w-40 rounded-full bg-white/20 blur-3xl dark:bg-white/10" />
+          <div className="h-40 w-40 rounded-full bg-white/20 blur-3xl " />
         </div>
       </div>
     </section>
