@@ -3,7 +3,7 @@ import { useRef, useState, useEffect, useCallback } from "react";
 
 import VideoLayer from "./components/VideoLayer.jsx";
 import Overlay from "./components/Overlay.jsx";
-// AOS is lazy-loaded to reduce initial bundle size
+// AOS CSS is now loaded in main.jsx
 import Seo19 from "./components/Seo19.jsx";
 import PlayMusic from "./components/PlayMusic.jsx";
 
@@ -27,6 +27,10 @@ export default function App() {
 
   const audioRef = useRef(null);
   const videoRef = useRef(null);
+
+  // AOS refs
+  const aosRef = useRef(null);
+  const aosReadyRef = useRef(false);
 
   // App state
   const [mode, setMode] = useState("background"); // 'background' | 'story'
@@ -58,11 +62,11 @@ export default function App() {
   );
   const resetBackground = useCallback(() => setBgOverride(null), []);
 
-  // Smooth volume ramp with resilient step timing
+  // Smooth volume ramp
   const fadeTo = useCallback(async (target = 1, ms = 400) => {
     const a = audioRef.current;
     if (!a) return;
-    const steps = Math.max(2, Math.floor(ms / 25)); // at least 2 steps
+    const steps = Math.max(2, Math.floor(ms / 25));
     const start = a.volume ?? 1;
     const step = (target - start) / steps;
     for (let i = 0; i < steps; i++) {
@@ -81,18 +85,18 @@ export default function App() {
       const prevVol = a.volume ?? 1;
       a.muted = true;
       a.volume = 0;
-      await a.play(); // silent play to satisfy autoplay policies
+      await a.play(); // silent play to satisfy autoplay
       a.pause();
       a.currentTime = 0;
-      a.muted = muted; // respect user preference only
+      a.muted = muted;
       a.volume = prevVol;
       setUnlocked(true);
     } catch {
-      // still locked — needs another gesture
+      // needs another gesture
     }
   }, [unlocked, muted]);
 
-  // One-time unlock on first user interaction
+  // One-time unlock on first interaction
   useEffect(() => {
     const onFirstInteract = () => primeAudio();
     window.addEventListener("pointerdown", onFirstInteract, { once: true, passive: true });
@@ -103,66 +107,64 @@ export default function App() {
     };
   }, [primeAudio]);
 
-  // Lazy-load AOS on client
-  // useEffect(() => {
-  //   let cleanup = () => {};
-  //   (async () => {
-  //     const { default: AOS } = await import("aos");
-  //     await import("aos/dist/aos.css");
-  //     AOS.init({ duration: 800, easing: "ease-in-out", once: true });
-  //     cleanup = () => AOS.refreshHard();
-  //   })();
-  //   return () => cleanup();
-  // }, []);
+  // ✅ AOS: lazy-load lib, defer init to next frame, then extra refreshHard
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      if (!aosRef.current) {
+        const { default: AOS } = await import("aos");
+        aosRef.current = AOS;
+      }
+      // wait for first paint to avoid measuring mid-layout
+      requestAnimationFrame(() => {
+        if (!mounted) return;
+        aosRef.current.init({
+          duration: 800,
+          easing: "ease-in-out",
+          once: true,
+          disable: () =>
+            typeof window !== "undefined" &&
+            window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
+        });
+        aosReadyRef.current = true;
+        // one more hard refresh after CSS/fonts/images likely settle
+        setTimeout(() => {
+          try {
+            aosRef.current.refreshHard();
+          } catch {}
+        }, 200);
+      });
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
-  // (keep your existing imports)
-
-const aosRef = useRef(null);
-const aosReadyRef = useRef(false);
-
-// init once
-useEffect(() => {
-  let mounted = true;
-  (async () => {
-    if (!aosRef.current) {
-      const { default: AOS } = await import("aos");
-      await import("aos/dist/aos.css"); // keep lazy if you prefer
-      aosRef.current = AOS;
-    }
-    if (!mounted) return;
-    aosRef.current.init({
-      duration: 800,
-      easing: "ease-in-out",
-      once: true,
-      disable: () =>
-        typeof window !== "undefined" &&
-        window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
+  // refresh HARD on route change after paint
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => {
+      if (aosReadyRef.current) {
+        try {
+          aosRef.current.refreshHard();
+        } catch {}
+      }
     });
-    aosReadyRef.current = true;
-  })();
-  return () => { mounted = false; };
-}, []);
+    return () => cancelAnimationFrame(raf);
+  }, [pathname]);
 
-// refresh on route change AFTER DOM is painted
-useEffect(() => {
-  const raf = requestAnimationFrame(() => {
-    if (aosReadyRef.current) {
-      try { aosRef.current.refresh(); } catch {}
-    }
-  });
-  return () => cancelAnimationFrame(raf);
-}, [pathname]);
-
-// (optional) keep offsets fresh if content resizes after load
-useEffect(() => {
-  if (!("ResizeObserver" in window)) return;
-  const ro = new ResizeObserver(() => {
-    if (aosReadyRef.current) aosRef.current.refresh();
-  });
-  ro.observe(document.body);
-  return () => ro.disconnect();
-}, []);
-
+  // keep offsets fresh if content resizes after load
+  useEffect(() => {
+    if (!("ResizeObserver" in window)) return;
+    const ro = new ResizeObserver(() => {
+      if (aosReadyRef.current) {
+        try {
+          aosRef.current.refreshHard();
+        } catch {}
+      }
+    });
+    ro.observe(document.body);
+    return () => ro.disconnect();
+  }, []);
 
   // Clear background override on route change
   useEffect(() => setBgOverride(null), [pathname]);
@@ -207,8 +209,8 @@ useEffect(() => {
       el.loop = !!loop;
       el.muted = true;
       el.setAttribute("muted", "");
-      el.setAttribute("playsinline", ""); // iOS guard
-      el.srcObject = null; // safety reset
+      el.setAttribute("playsinline", "");
+      el.srcObject = null;
 
       const absolute = new URL(src, window.location.origin).href;
       const same = el.currentSrc === absolute || el.src === absolute;
@@ -224,7 +226,7 @@ useEffect(() => {
       try {
         await el.play();
       } catch {
-        /* ignore autoplay failures */
+        /* autoplay failures are fine */
       }
     };
 
@@ -248,6 +250,23 @@ useEffect(() => {
       ensureAudioPlaying();
     }
   }, [mode, storyIndex, unlocked, muted, effectiveBg, fadeTo, allowAudio]);
+
+  // ✅ AOS: refresh HARD when the active video stabilizes (reduces jank on first load)
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el || !aosReadyRef.current) return;
+    const onLoaded = () => {
+      try {
+        aosRef.current.refreshHard();
+      } catch {}
+    };
+    el.addEventListener("loadeddata", onLoaded);
+    el.addEventListener("loadedmetadata", onLoaded);
+    return () => {
+      el.removeEventListener("loadeddata", onLoaded);
+      el.removeEventListener("loadedmetadata", onLoaded);
+    };
+  }, [effectiveBg.src, mode, storyIndex]);
 
   // End-of-video only in story mode
   const handleEnded = useCallback(() => {
