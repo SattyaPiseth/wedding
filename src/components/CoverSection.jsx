@@ -106,7 +106,6 @@ export default function CoverSection({
               [animation-delay:560ms]
               motion-reduce:animate-none
             "
-            aria-label="បើកពិធី"
           >
             សូមចុចបើកធៀប
           </button>
