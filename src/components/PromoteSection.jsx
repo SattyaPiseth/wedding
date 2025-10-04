@@ -1,5 +1,5 @@
 // components/PromoteSection.jsx
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useId, useMemo } from "react";
 import {
   motion,
   useMotionValue,
@@ -16,10 +16,13 @@ import {
  * @param {string} [props.sizes]
  * @param {number} [props.width]
  * @param {number} [props.height]
- * @param {"sm"|"md"|"lg"} [props.glass="md"]
+ * @param {"sm"|"md"|"lg"} [props.glass="md"]   // kept for API compatibility (unused)
  * @param {boolean} [props.enableTilt=true]
- * @param {number} [props.tiltRange=40]      // px radius mapped to rotation
- * @param {number} [props.hoverScale=1.01]   // figure hover scale
+ * @param {number} [props.tiltRange=40]         // px radius mapped to rotation
+ * @param {number} [props.hoverScale=1.01]      // figure hover scale
+ * @param {boolean} [props.showGlow=true]       // toggle the soft animated glows
+ * @param {string}  [props.rounded="rounded-lg"]// customize corner radius
+ * @param {string}  [props.shadow="shadow-lg"]  // customize/remove shadow ("" to remove)
  */
 export const PromoteSection = ({
   src = "/images/memora-shine/memora-shine-end-page.png",
@@ -29,28 +32,25 @@ export const PromoteSection = ({
   sizes = "(max-width: 640px) 100vw, 640px",
   width,
   height,
-  glass = "md",
+  glass: _glass = "md", // preserved for compatibility; intentionally unused
   enableTilt = true,
   tiltRange = 40,
   hoverScale = 1.01,
+  showGlow = true,
+  rounded = "rounded-lg",
+  shadow = "shadow-lg",
 }) => {
   const prefersReduced = useReducedMotion();
-
-  // Glass presets
-  const glassMap = {
-    sm: "bg-white/5 supports-[backdrop-filter]:bg-white/10 supports-[backdrop-filter]:backdrop-blur-sm",
-    md: "bg-white/10 supports-[backdrop-filter]:bg-white/15 supports-[backdrop-filter]:backdrop-blur-md",
-    lg: "bg-white/15 supports-[backdrop-filter]:bg-white/20 supports-[backdrop-filter]:backdrop-blur-lg",
-  };
+  const captionId = useId();
 
   // Motion values
   const ref = useRef(null);
-  const rafRef = useRef(0); // throttle mousemove with rAF
+  const rafRef = useRef(0); // throttle pointermove with rAF
 
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
 
-  // Map mouse distance to rotation (guarded by reduced motion / enableTilt)
+  // Map pointer distance to rotation (guarded by reduced motion / enableTilt)
   const rotateX = useTransform(
     my,
     [-tiltRange, tiltRange],
@@ -62,8 +62,9 @@ export const PromoteSection = ({
     prefersReduced || !enableTilt ? [0, 0] : [-6, 6]
   );
 
-  // Mouse handlers (rAF throttled for less layout thrash)
+  // Pointer handlers (rAF throttled for less layout thrash)
   const onMove = (e) => {
+    if (!e.isPrimary) return; // only react to primary pointer
     if (prefersReduced || !enableTilt || !ref.current) return;
 
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -86,7 +87,10 @@ export const PromoteSection = ({
     my.set(0);
   };
 
-  useEffect(() => () => rafRef.current && cancelAnimationFrame(rafRef.current), []);
+  useEffect(
+    () => () => rafRef.current && cancelAnimationFrame(rafRef.current),
+    []
+  );
 
   // Entrance variants
   const figureVariants = {
@@ -103,19 +107,25 @@ export const PromoteSection = ({
     },
   };
 
-  // Breathing glow
-  const glowPulse = prefersReduced
-    ? {}
-    : {
-        opacity: [0.15, 0.3, 0.15],
-        transition: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-      };
+  // Breathing glow (memoized so Framer doesn't see a new object each render)
+  const glowPulse = useMemo(
+    () =>
+      prefersReduced
+        ? {}
+        : {
+            opacity: [0.15, 0.3, 0.15],
+            transition: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+          },
+    [prefersReduced]
+  );
 
   return (
     <motion.figure
       ref={ref}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
+      onPointerMove={onMove}
+      onPointerLeave={onLeave}
+      onPointerCancel={onLeave}
+      onPointerUp={onLeave}
       variants={figureVariants}
       initial="hidden"
       whileInView="show"
@@ -127,31 +137,38 @@ export const PromoteSection = ({
         willChange: enableTilt && !prefersReduced ? "transform" : undefined,
       }}
       whileHover={prefersReduced ? {} : { scale: hoverScale }}
-      className={[
-        "relative isolate mt-6 overflow-hidden rounded-lg",
-        // Borders & subtle ring
-        "border border-white/20 ring-1 ring-black/5 dark:border-white/10 dark:ring-white/5",
-        // Glass
-        glassMap[glass],
-        // Shadow + GPU hint
-        "shadow-lg transform-gpu",
-        className,
-      ].join(" ")}
-      // more descriptive landmark for screen readers
+      className={
+        [
+          // Perspective improves the 3D feel of rotateX/rotateY
+          `relative isolate mt-6 overflow-hidden ${rounded} [perspective:1000px]`,
+          // Transparent glass (no ring/border)
+          "bg-transparent",
+          // Shadow + GPU hint
+          `${shadow} transform-gpu`,
+          className,
+        ]
+          .filter(Boolean)
+          .join(" ")
+      }
       role="group"
       aria-label={caption || alt || "Promotion"}
+      aria-describedby={caption ? captionId : undefined}
     >
-      {/* Soft animated glows */}
-      <motion.div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-24 -left-24 h-64 w-64 rounded-full bg-gradient-to-br from-white/40 via-white/10 to-transparent blur-2xl"
-        animate={glowPulse}
-      />
-      <motion.div
-        aria-hidden="true"
-        className="pointer-events-none absolute -bottom-24 -right-24 h-64 w-64 rounded-full bg-gradient-to-tr from-[#f7c948]/30 via-transparent to-transparent blur-2xl"
-        animate={glowPulse}
-      />
+      {/* Soft animated glows (toggleable) */}
+      {showGlow && (
+        <>
+          <motion.div
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-24 -left-24 h-64 w-64 rounded-full bg-gradient-to-br from-white/40 via-white/10 to-transparent blur-2xl"
+            animate={glowPulse}
+          />
+          <motion.div
+            aria-hidden="true"
+            className="pointer-events-none absolute -bottom-24 -right-24 h-64 w-64 rounded-full bg-gradient-to-tr from-[#f7c948]/30 via-transparent to-transparent blur-2xl"
+            animate={glowPulse}
+          />
+        </>
+      )}
 
       {/* Content */}
       <motion.div
@@ -179,6 +196,7 @@ export const PromoteSection = ({
 
         {caption && (
           <motion.figcaption
+            id={captionId}
             className="siemreap-regular px-4 py-3 text-center text-sm sm:text-base text-black/70 dark:text-white/80"
             initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -190,15 +208,7 @@ export const PromoteSection = ({
         )}
       </motion.div>
 
-      {/* Frosted border sheen */}
-      <motion.div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 rounded-lg ring-1 ring-inset ring-white/20"
-        animate={prefersReduced ? {} : { opacity: [0.6, 0.85, 0.6] }}
-        transition={
-          prefersReduced ? {} : { duration: 6, repeat: Infinity, ease: "easeInOut" }
-        }
-      />
+      {/* Frosted border sheen removed */}
     </motion.figure>
   );
 };

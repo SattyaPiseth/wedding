@@ -41,7 +41,8 @@ export default function DescriptionSection({
     <section
       lang="km"
       aria-labelledby="invite-title"
-      className="mx-auto max-w-2xl sm:px-12 sm:py-8 md:px-28 lg:px-32" data-aos="fade-up"
+      className="mx-auto max-w-2xl sm:px-12 sm:py-8 md:px-28 lg:px-32"
+      data-aos="fade-up"
     >
       <SoftCard>
         {/* Invite Heading */}
@@ -133,11 +134,7 @@ export default function DescriptionSection({
 
         {/* Event posters */}
         <figure className="mt-6">
-          <img
-            src={morning_event_image}
-            alt="Morning event"
-            loading="lazy"
-          />
+          <img src={morning_event_image} alt="Morning event" loading="lazy" />
         </figure>
 
         <figure className="mt-4">
@@ -149,9 +146,7 @@ export default function DescriptionSection({
         </figure>
 
         {/* Countdown */}
-        <section
-          className="mt-6 flex flex-col items-center justify-center gap-3 text-3xl"
-        >
+        <section className="mt-6 flex flex-col items-center justify-center gap-3 text-3xl">
           <h3 className="great-vibes-regular tracking-wide">Save The Date</h3>
           <p className="great-vibes-regular text-xl tracking-wider">
             K&amp;R The Wedding
@@ -160,11 +155,7 @@ export default function DescriptionSection({
         </section>
 
         {/* Gallery */}
-        <h3
-          className="moul-regular text-lg mt-6" 
-        >
-          កម្រងរូបភាព
-        </h3>
+        <h3 className="moul-regular text-lg mt-6">កម្រងរូបភាព</h3>
         <MasonryGallery images={galleryImages} onOpen={open} />
 
         {isOpen && (
@@ -176,11 +167,17 @@ export default function DescriptionSection({
             onNext={next}
           />
         )}
-       <GratitudeSection/>
-       <CommentSection/>
-       <div data-aos="fade-up">
-        <PromoteSection/>
-       </div>
+
+        <div data-aos="fade-up" data-aos-anchor-placement="top-bottom"> 
+          <GratitudeSection />
+          <CommentSection />
+          <PromoteSection
+            src="/images/memora-shine/memora-shine-end-page.png"
+            alt="Clean image"
+            shadow="" // no shadow
+            showGlow={false} // no glow
+          />
+        </div>
       </SoftCard>
     </section>
   );
