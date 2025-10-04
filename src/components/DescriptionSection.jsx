@@ -10,7 +10,7 @@ import morning_event_image from "/images/morning-event.png";
 import afternoon_event_image from "/images/afternoon-event.png";
 import { GratitudeSection } from "./GratitudeSection";
 import { PromoteSection } from "./PromoteSection";
-import { CommentSection } from "./comment/CommentSection";
+import Discussion from "./comment/Discussion";
 
 export default function DescriptionSection({
   // Customizable props with safe defaults
@@ -170,7 +170,7 @@ export default function DescriptionSection({
 
         <div data-aos="fade-up" data-aos-anchor-placement="top-bottom"> 
           <GratitudeSection />
-          <CommentSection />
+          <Discussion/>
           <PromoteSection
             src="/images/memora-shine/memora-shine-end-page.png"
             alt="Clean image"

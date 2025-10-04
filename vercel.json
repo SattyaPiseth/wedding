@@ -1,27 +1,61 @@
 {
   "version": 2,
   "routes": [
-    { "src": "^/(assets/.+)$", "headers": { "Cache-Control": "public, max-age=31536000, immutable" }, "dest": "/$1" },
-    { "src": "^/(images/.+)$", "headers": { "Cache-Control": "public, max-age=31536000, immutable" }, "dest": "/$1" },
-    { "src": "^/(audio/.+)$",  "headers": { "Cache-Control": "public, max-age=31536000, immutable" }, "dest": "/$1" },
-    { "src": "^/(videos/.+)$", "headers": { "Cache-Control": "public, max-age=31536000, immutable", "Accept-Ranges": "bytes" }, "dest": "/$1" },
+    {
+      "src": "^/(assets/.+)$",
+      "headers": { "Cache-Control": "public, max-age=31536000, immutable" },
+      "dest": "/$1"
+    },
+    {
+      "src": "^/(images/.+)$",
+      "headers": { "Cache-Control": "public, max-age=31536000, immutable" },
+      "dest": "/$1"
+    },
+    {
+      "src": "^/(audio/.+)$",
+      "headers": { "Cache-Control": "public, max-age=31536000, immutable" },
+      "dest": "/$1"
+    },
+    {
+      "src": "^/(videos/.+)$",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable",
+        "Accept-Ranges": "bytes"
+      },
+      "dest": "/$1"
+    },
 
-
-    { "src": "^/memora-logo\\.jpg$", "headers": { "Cache-Control": "public, max-age=31536000, immutable" }, "dest": "/memora-logo.jpg" },
-
+    {
+      "src": "^/memora-logo\\.jpg$",
+      "headers": { "Cache-Control": "public, max-age=31536000, immutable" },
+      "dest": "/memora-logo.jpg"
+    },
 
     {
       "src": "^/$",
-      "has": [{ "type": "header", "key": "user-agent", "value": "(?i)(Twitterbot|facebookexternalhit|LinkedInBot|Slackbot|WhatsApp|TelegramBot|Pinterest|Discordbot|Google-InspectionTool|Googlebot|Bingbot|DuckDuckBot)" }],
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i)(Twitterbot|facebookexternalhit|LinkedInBot|Slackbot|WhatsApp|TelegramBot|Pinterest|Discordbot|Google-InspectionTool|Googlebot|Bingbot|DuckDuckBot)"
+        }
+      ],
       "dest": "/api/ssr-meta"
     },
-
     {
       "src": "^/([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$",
-      "has": [{ "type": "header", "key": "user-agent", "value": "(?i)(Twitterbot|facebookexternalhit|LinkedInBot|Slackbot|WhatsApp|TelegramBot|Pinterest|Discordbot|Google-InspectionTool|Googlebot|Bingbot|DuckDuckBot)" }],
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i)(Twitterbot|facebookexternalhit|LinkedInBot|Slackbot|WhatsApp|TelegramBot|Pinterest|Discordbot|Google-InspectionTool|Googlebot|Bingbot|DuckDuckBot)"
+        }
+      ],
       "dest": "/api/ssr-meta"
     },
 
-    { "src": "/(.*)", "dest": "/index.html", "check": true }
+    { "src": "^/api/wishes/?$", "dest": "api/wishes.js" },
+
+    { "src": "^(?!/api/).*$", "dest": "/index.html" }
   ]
 }
