@@ -173,7 +173,7 @@ export default function Discussion() {
 
   return (
     <section className="bg-transparent py-8 lg:py-16 antialiased">
-      <div className="max-w-2xl mx-auto px-4">
+      <div className="max-w-2xl mx-auto">
         <CommentSection onSubmit={handleSubmit} />
 
         {error && (
