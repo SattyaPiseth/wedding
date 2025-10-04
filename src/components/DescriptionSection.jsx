@@ -167,8 +167,6 @@ export default function DescriptionSection({
             onNext={next}
           />
         )}
-
-        <div data-aos="fade-up" data-aos-anchor-placement="top-bottom"> 
           <GratitudeSection />
           <Discussion/>
           <PromoteSection
@@ -177,7 +175,6 @@ export default function DescriptionSection({
             shadow="" // no shadow
             showGlow={false} // no glow
           />
-        </div>
       </SoftCard>
     </section>
   );
