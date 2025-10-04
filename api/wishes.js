@@ -1,7 +1,7 @@
 import { list, put } from "@vercel/blob";
 
 const BLOB_KEY = "wishes/wishes.json";
-const token = process.env.BLOB_READ_WRITE_TOKEN;
+const token = process.env.HONGKIM_NARY_READ_WRITE_TOKEN;
 
 async function readJsonBody(req) {
   if (req.body && typeof req.body === "object") return req.body;
