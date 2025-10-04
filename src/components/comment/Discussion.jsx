@@ -187,7 +187,7 @@ export default function Discussion() {
             {/* Sticky header */}
             <div className="sticky top-0 z-10 flex items-center justify-between gap-3 px-5 py-3 rounded-t-2xl bg-gradient-to-b from-white/70 to-white/30 border-b border-white/40 backdrop-blur-xl">
               <h3 className="font-semibold text-gray-900 siemreap-regular">
-                Guest wishes
+                Greetings
               </h3>
               <span className="inline-flex items-center gap-2 text-xs font-medium px-3 py-1 rounded-full bg-black/5 text-gray-700">
                 {countText}
