@@ -191,7 +191,7 @@ export function CommentSection({
                 label="សារជូនពរ"
                 name="message"
                 placeholder="សូមបញ្ចូលសារជូនពរ"
-                hint="💡 ព័ត៌មានរបស់អ្នកអាចត្រូវបានបង្ហាញលើទំព័រខាងលើ (បើអ្នកយល់ព្រម)"
+                hint="💡 ព័ត៌មានរបស់អ្នកអាចត្រូវបានបង្ហាញលើទំព័រខាងក្រោម (បើអ្នកយល់ព្រម)"
                 hintId={hintId}
                 maxLength={maxLength}
                 value={message}
